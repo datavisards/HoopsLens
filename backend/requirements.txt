@@ -7,7 +7,3 @@ scipy
 nba_api
 requests
 python-dotenv
-
-# AI Libraries (optional - install based on your preferred provider)
-google-genai>=0.1.0
-openai>=1.0.0

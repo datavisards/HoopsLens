@@ -21,6 +21,7 @@ interface PlayerProps {
   scale?: number;
   armExtension?: number; // 0 to 1, for steal animation
   actionType?: ActionType; // Current action type (block, steal, etc.)
+  isWarning?: boolean;     // Roster-Fit mismatch — show red ring
 }
 
 const Player: React.FC<PlayerProps> = ({ 
@@ -39,7 +40,8 @@ const Player: React.FC<PlayerProps> = ({
   viewMode = 'full',
   scale = 1,
   armExtension = 0,
-  actionType
+  actionType,
+  isWarning = false,
 }) => {
   const color = TEAM_COLORS[player.team] || '#999';
   const isLightColor = ['white', 'yellow', 'grey'].includes(player.team);
@@ -380,6 +382,26 @@ const Player: React.FC<PlayerProps> = ({
           />
         )}
       </Group>
+
+      {/* Roster-Fit Warning Ring */}
+      {isWarning && (
+        <Group listening={false}>
+          <Circle
+            radius={radius + 13}
+            stroke="#f5222d"
+            strokeWidth={2.5}
+            opacity={0.9}
+            shadowColor="#f5222d"
+            shadowBlur={10}
+            shadowOpacity={0.6}
+          />
+          <Circle
+            radius={radius + 18}
+            stroke="rgba(245,34,45,0.35)"
+            strokeWidth={1.5}
+          />
+        </Group>
+      )}
 
       {/* Selection & Rotation Handle */}
       {(isSelected || hasBall) && (

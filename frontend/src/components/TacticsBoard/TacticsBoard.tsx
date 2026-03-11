@@ -8,8 +8,8 @@ import AssetsBar from './AssetsBar';
 import ActionLayer from './ActionLayer';
 import DanmakuLayer from './DanmakuLayer';
 import PlayerInfoPanel from './PlayerInfoPanel';
-import { BoardEntity, ViewMode, Player as PlayerType, Ball as BallType, TeamType, Action, ActionType, Position } from '../../types';
-import { COURT_WIDTH, COURT_HEIGHT, APP_BACKGROUND } from '../../utils/constants';
+import { BoardEntity, ViewMode, Player as PlayerType, Ball as BallType, TeamType, Action, ActionType, Position, OffensiveRoleCode } from '../../types';
+import { COURT_WIDTH, COURT_HEIGHT, APP_BACKGROUND, POSITIONS } from '../../utils/constants';
 import { Button, Tooltip, Menu, Dropdown, Slider, message, Modal, List, Card, Tag, Spin, Input, Avatar, Form, Select, Row, Col, Upload, Space, Radio } from 'antd';
 // import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { 
@@ -33,21 +33,27 @@ import {
   RetweetOutlined,
   LineChartOutlined,
   StopOutlined,
-  BulbOutlined,
   FileTextOutlined,
   EyeOutlined,
   EyeInvisibleOutlined,
   UserOutlined,
   SearchOutlined,
-  ReloadOutlined
+  ReloadOutlined,
+  RobotOutlined
 } from '@ant-design/icons';
 
 import GhostDefenseLayer from './GhostDefenseLayer';
 import TacticsLibrary from './TacticsLibrary';
-import ChatPanel from './ChatPanel';
+import LineupDiagnosticPanel from './LineupDiagnosticPanel';
 import { resolveCollisions, calculateGhostDefender } from '../../utils/playerUtils';
 import { API_ENDPOINTS } from '../../config/api';
-import { BookOutlined, RobotOutlined } from '@ant-design/icons';
+import { ATOMIC_ACTIONS, ATOMIC_ACTION_TAG_OPTIONS } from '../../config/atomicActions';
+import { OFFENSIVE_ROLE_TAG_OPTIONS } from '../../config/playerRoles';
+import { deriveActionTag } from '../../utils/actionTagging';
+import { computeRosterFit } from '../../utils/rosterFit';
+import { FitError } from '../../types';
+import RosterFitPanel from './RosterFitPanel';
+import { BookOutlined, RadarChartOutlined } from '@ant-design/icons';
 
 interface Frame {
   id: string;
@@ -97,13 +103,11 @@ const TacticsBoard: React.FC = () => {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<BlobPart[]>([]);
 
-  // Recommendation State
-  const [isRecommendationModalVisible, setIsRecommendationModalVisible] = useState(false);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
-  const [loadingRecommendations, setLoadingRecommendations] = useState(false);
-
   // Ghost Defense State
   const [showGhostDefense, setShowGhostDefense] = useState(false);
+
+  // AI Chat Panel State
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
 
   // Tactics Library State
   const [isTacticsLibraryVisible, setIsTacticsLibraryVisible] = useState(false);
@@ -114,39 +118,22 @@ const TacticsBoard: React.FC = () => {
   const [saveForm] = Form.useForm();
   const [saveLoading, setSaveLoading] = useState(false);
   const [savePreviewImage, setSavePreviewImage] = useState<string>('');
+  const atomicActionTagOptions = ATOMIC_ACTION_TAG_OPTIONS;
   // Edit Mode State
   const [currentTacticId, setCurrentTacticId] = useState<string | null>(null);
   const [currentTacticMetadata, setCurrentTacticMetadata] = useState<any>(null);
 
-  // AI Chat State
-  const [isChatPanelVisible, setIsChatPanelVisible] = useState(false);
 
+  // Player Tag Assignment State (new)
+  const [isTagModalVisible, setIsTagModalVisible] = useState(false);
+  const [targetPlayerId, setTargetPlayerId] = useState<string | null>(null);
 
-  // Player Assignment State
+  /* --- NBA Player Assignment (commented out, kept for reference) ---
   const [isPlayerSearchModalVisible, setIsPlayerSearchModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [loadingPlayers, setLoadingPlayers] = useState(false);
-  const [targetPlayerId, setTargetPlayerId] = useState<string | null>(null);
-
-  /* 
-  // EPV Analysis State
-  const [epvData, setEpvData] = useState<any>(null);
-  const [isEpvModalVisible, setIsEpvModalVisible] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showAnalysisPanel, setShowAnalysisPanel] = useState(false); // Toggle for right panel
-  
-  // EPV Sliders State
-  const [epvSliders, setEpvSliders] = useState({
-    base: 0.0,
-    dribble: -0.5,
-    defense: 0.5
-  });
-  */
-  // Commented out to hide analysis feature
-  const isAnalyzing = false;
-  const showAnalysisPanel = false;
-  const epvData = null;
+  --- end NBA --- */
 
   // Sync current state to current frame when it changes
   React.useEffect(() => {
@@ -618,22 +605,19 @@ const TacticsBoard: React.FC = () => {
   const [throttledTime, setThrottledTime] = useState(0);
   const lastChartUpdateRef = useRef(0);
 
+  // ─── Roster-Fit live error computation ──────────────────────────────────────
+  // 暂时注释掉基于连线的动作匹配警告
+  const fitErrors: FitError[] = React.useMemo(() => [], [actionsMap, entitiesMap, viewMode, currentFrameIndex]);
+  // const fitErrors: FitError[] = React.useMemo(
+  //   () => computeRosterFit(actionsMap[viewMode], entitiesMap[viewMode], currentFrameIndex),
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  //   [actionsMap, entitiesMap, viewMode, currentFrameIndex],
+  // );
+
   // Memoize Court to prevent re-renders during animation
   const memoizedCourt = React.useMemo(() => <Court viewMode={viewMode} />, [viewMode]);
 
-  /*
-  // Throttle chart updates to ~20 FPS to prevent animation lag
-  React.useEffect(() => {
-    if (showAnalysisPanel && epvData) {
-      const now = performance.now();
-      const currentTime = currentFrameIndex + animationProgress;
-      if (now - lastChartUpdateRef.current > 50) { // Update every 50ms
-        setThrottledTime(currentTime);
-        lastChartUpdateRef.current = now;
-      }
-    }
-  }, [currentFrameIndex, animationProgress, showAnalysisPanel, epvData]);
-  */
+  
 
   // Handle rotating entities
   const handleEntityRotate = React.useCallback((id: string, rotation: number) => {
@@ -749,7 +733,15 @@ const TacticsBoard: React.FC = () => {
     if (selectedActionId) {
       setActionsMap(prev => ({
         ...prev,
-        [viewMode]: prev[viewMode].map(a => a.id === selectedActionId ? { ...a, type } : a)
+        [viewMode]: prev[viewMode].map(a => {
+          if (a.id !== selectedActionId) return a;
+          const currentEntities = entitiesMapRef.current[viewMode];
+          const ap = currentEntities.find(e => e.id === a.playerId) as PlayerType | undefined;
+          const hb = ap ? currentEntities.some(e => e.type === 'ball' && (e as BallType).ownerId === ap.id) : false;
+          const startPos = a.path[0];
+          const endPos = a.path[a.path.length - 1] ?? startPos;
+          return { ...a, type, actionTag: deriveActionTag(type, hb, startPos.x, startPos.y, endPos.x, endPos.y) };
+        }),
       }));
     }
   };
@@ -833,10 +825,17 @@ const TacticsBoard: React.FC = () => {
     const p1 = { x: start.x + dx * 0.33, y: start.y + dy * 0.33 };
     const p2 = { x: start.x + dx * 0.66, y: start.y + dy * 0.66 };
     
+    const currentEntities = entitiesMapRef.current[viewMode];
+    const actingPlayer = currentEntities.find(e => e.id === currentAction.playerId) as PlayerType | undefined;
+    const hasBallNow = actingPlayer
+      ? currentEntities.some(e => e.type === 'ball' && (e as BallType).ownerId === actingPlayer.id)
+      : false;
+
     const finalAction = {
       ...currentAction,
       path: [start, p1, p2, end],
-      color: '#ff4d4f' // Default red
+      color: '#ff4d4f', // Default red
+      actionTag: deriveActionTag(currentAction.type, hasBallNow, start.x, start.y, end.x, end.y),
     };
 
     setActionsMap(prev => ({
@@ -1189,10 +1188,10 @@ const TacticsBoard: React.FC = () => {
                     size="small" 
                     shape="circle" 
                     type={currentSpeed === 'walk' ? 'primary' : 'text'} 
-                    style={{ color: currentSpeed !== 'walk' ? 'white' : undefined, fontSize: '12px' }} 
+              style={{ color: currentSpeed !== 'walk' ? 'white' : undefined, fontSize: '11px', fontWeight: 700 }} 
                     onClick={() => handleChangeActionSpeed('walk')}
                 >
-                    🐢
+              {'\uD83D\uDC22'}
                 </Button>
             </Tooltip>
             <Tooltip title="Jog (Normal)">
@@ -1200,10 +1199,10 @@ const TacticsBoard: React.FC = () => {
                     size="small" 
                     shape="circle" 
                     type={currentSpeed === 'jog' ? 'primary' : 'text'} 
-                    style={{ color: currentSpeed !== 'jog' ? 'white' : undefined, fontSize: '12px' }} 
+              style={{ color: currentSpeed !== 'jog' ? 'white' : undefined, fontSize: '11px', fontWeight: 700 }} 
                     onClick={() => handleChangeActionSpeed('jog')}
                 >
-                    🏃
+              {'\uD83C\uDFC3'}
                 </Button>
             </Tooltip>
             <Tooltip title="Sprint (Fast)">
@@ -1211,10 +1210,10 @@ const TacticsBoard: React.FC = () => {
                     size="small" 
                     shape="circle" 
                     type={currentSpeed === 'sprint' ? 'primary' : 'text'} 
-                    style={{ color: currentSpeed !== 'sprint' ? 'white' : undefined, fontSize: '12px' }} 
+              style={{ color: currentSpeed !== 'sprint' ? 'white' : undefined, fontSize: '11px', fontWeight: 700 }} 
                     onClick={() => handleChangeActionSpeed('sprint')}
                 >
-                    ⚡
+              {'\u26A1'}
                 </Button>
             </Tooltip>
         </div>
@@ -1222,6 +1221,7 @@ const TacticsBoard: React.FC = () => {
         {/* Label Input Row (Danmaku) */}
         <div style={{ ...rowStyle, paddingTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
             <Input 
+            className="action-label-input"
                 placeholder="Action Label (e.g. Screen)" 
                 value={selectedAction.label || ''} 
                 onChange={(e) => {
@@ -1232,7 +1232,14 @@ const TacticsBoard: React.FC = () => {
                     }));
                 }}
                 size="small"
-                style={{ width: '100%', fontSize: '12px', background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none' }}
+                style={{
+                  width: '100%',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  background: 'rgba(10,18,32,0.78)',
+                  color: '#f5f8ff',
+                  border: '1px solid rgba(140,170,255,0.35)'
+                }}
                 onClick={(e) => e.stopPropagation()} 
             />
         </div>
@@ -1519,9 +1526,6 @@ const TacticsBoard: React.FC = () => {
             transform: scale(1.15);
             color: #3A7AFE !important; /* Accent Blue */
           }
-          .frame-desc-input::placeholder {
-            color: rgba(255, 255, 255, 0.5) !important;
-          }
         `}
       </style>
 
@@ -1580,7 +1584,7 @@ const TacticsBoard: React.FC = () => {
         {/* Frame Description Input */}
         <div style={{ marginLeft: '10px', borderLeft: '1px solid rgba(255,255,255,0.2)', paddingLeft: '10px' }}>
             <Input 
-                className="frame-desc-input"
+            className="action-label-input"
                 placeholder="Frame Description (e.g. Pick & Roll)" 
                 value={frames[currentFrameIndex]?.description || ''}
                 onChange={(e) => {
@@ -1596,10 +1600,11 @@ const TacticsBoard: React.FC = () => {
                 }}
                 style={{ 
                     width: '200px', 
-                    background: '#141414', 
-                    border: '1px solid #434343', 
-                    color: '#ffffff',
-                    fontSize: '12px',
+                  background: 'rgba(10, 18, 32, 0.78)',
+                  border: '1px solid rgba(140, 170, 255, 0.35)',
+                  color: '#f5f8ff',
+                  fontSize: '13px',
+                  fontWeight: 500,
                     borderRadius: '4px'
                 }}
                 size="small"
@@ -1666,385 +1671,26 @@ const TacticsBoard: React.FC = () => {
     </div>
   );
 
-  /*
-  // Recommendation Handler
-  const handleAnalyzeEPV = async (silent = false, slidersOverride: any = null) => {
-    if (frames.length < 2) {
-      if (!silent) message.warning("Need at least 2 frames for analysis");
-      return;
-    }
-
-    setIsAnalyzing(true);
-    const trajectoryFrames = [];
-    let currentTime = 0;
-    const dt = 0.04; // 25 FPS simulation
-    const simPlaybackSpeed = 1.0; // Use standard speed for analysis
-
-    try {
-      for (let i = 0; i < frames.length - 1; i++) {
-        const currentFrame = frames[i];
-        const nextFrame = frames[i + 1];
-        
-        const currentEntities = currentFrame.entitiesMap[viewMode];
-        const nextEntities = nextFrame.entitiesMap[viewMode];
-        const currentActions = currentFrame.actionsMap[viewMode];
-
-        // Simulate transition
-        for (let progress = 0; progress <= 1; progress += (dt * simPlaybackSpeed)) {
-          const frameEntities = currentEntities.map(entity => {
-            const nextEntity = nextEntities.find(e => e.id === entity.id);
-            if (!nextEntity) return { id: entity.id, type: entity.type, team: (entity as any).team || 'neutral', x: entity.position.x, y: entity.position.y };
-
-            let pos = { ...entity.position };
-            let action: Action | undefined;
-
-            if (entity.type === 'player') {
-               action = currentActions.find(a => a.playerId === entity.id && ['move', 'dribble', 'screen', 'steal', 'block'].includes(a.type));
-            } else if (entity.type === 'ball') {
-               const ball = entity as BallType;
-               if (ball.ownerId) {
-                 action = currentActions.find(a => a.playerId === ball.ownerId && (a.type === 'pass' || a.type === 'shoot'));
-                 if (!action) {
-                     const ownerAction = currentActions.find(a => a.playerId === ball.ownerId && ['move', 'dribble', 'steal', 'screen', 'block'].includes(a.type));
-                     if (ownerAction) action = ownerAction;
-                 }
-               }
-            }
-
-            if (action && action.path.length >= 2) {
-               let t = progress;
-               let speedMultiplier = 1.5;
-               if (action.speed === 'walk') speedMultiplier = 1.0;
-               if (action.speed === 'sprint') speedMultiplier = 2.5;
-               
-               let localProgress = Math.min(1, progress * speedMultiplier);
-               t = localProgress;
-
-               if (action.type === 'steal') t = t * t;
-
-               if (t >= 1) {
-                   pos = action.path[action.path.length - 1];
-               } else {
-                   pos = getPointOnSpline(action.path, t);
-               }
-            } else {
-               pos = {
-                x: entity.position.x + (nextEntity.position.x - entity.position.x) * progress,
-                y: entity.position.y + (nextEntity.position.y - entity.position.y) * progress
-              };
-            }
-
-            return {
-              id: entity.id,
-              type: entity.type,
-              team: (entity as any).team || 'neutral',
-              x: pos.x,
-              y: pos.y,
-              ownerId: (entity as any).ownerId
-            };
-          });
-
-          // --- Inject Ghost Defenders if enabled ---
-          if (showGhostDefense) {
-             const ball = frameEntities.find(e => e.type === 'ball');
-             const ballOwner = frameEntities.find(e => e.id === (ball as any)?.ownerId);
-             const offenseTeam = (ballOwner as any)?.team || 'red';
-             
-             // Construct proper Ball object for utility
-             const ballObj = ball ? {
-                 ...ball,
-                 position: { x: ball.x, y: ball.y },
-                 ownerId: (ball as any).ownerId
-             } : undefined;
-
-             // Filter offensive players from the CURRENT interpolated frame
-             // We need to cast them to Player type structure for calculateGhostDefender
-             const currentPlayers = frameEntities
-                .filter(e => e.type === 'player')
-                .map(e => ({
-                    ...e,
-                    position: { x: e.x, y: e.y },
-                    role: 'player', // Dummy
-                    team: e.team
-                })) as any[];
-
-             currentPlayers.forEach(player => {
-                 if (player.team === offenseTeam) {
-                     const { position: ghostPos } = calculateGhostDefender(
-                         player, 
-                         ballObj as any, 
-                         viewMode, 
-                         currentPlayers
-                     );
-                     
-                     frameEntities.push({
-                         id: `ghost_${player.id}`,
-                         type: 'player',
-                         team: offenseTeam === 'red' ? 'blue' : 'red', // Opposite team
-                         x: ghostPos.x,
-                         y: ghostPos.y
-                     });
-                 }
-             });
-          }
-          
-          trajectoryFrames.push({
-            timestamp: currentTime,
-            entities: frameEntities
-          });
-          currentTime += dt;
-        }
-      }
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s for analysis
-      
-      // Collect ALL assigned player profiles
-      const playerMap: Record<string, number> = {};
-      const assignedNames: string[] = [];
-      
-      entitiesMap[viewMode].forEach(entity => {
-          if (entity.type === 'player' && (entity as any).profile) {
-              const pid = (entity as any).profile.id;
-              if (pid) {
-                  playerMap[entity.id] = pid;
-                  if (!assignedNames.includes((entity as any).profile.name)) {
-                      assignedNames.push((entity as any).profile.name);
-                  }
-              }
-          }
-      });
-
-      if (Object.keys(playerMap).length > 0) {
-          message.info(`Analyzing with data for: ${assignedNames.join(', ')}`);
-      } else {
-          message.warning("No NBA players identified. Using League Average.");
-      }
-
-      const response = await fetch(API_ENDPOINTS.ANALYZE_EPV, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-              trajectory: trajectoryFrames,
-              court_type: viewMode,
-              player_map: playerMap,
-              sliders: slidersOverride || epvSliders
-          }),
-          signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) throw new Error(`Analysis failed: ${response.status}`);
-      
-      const data = await response.json();
-      setEpvData(data);
-      // setIsEpvModalVisible(true); // No longer using modal
-      setShowAnalysisPanel(true); // Show panel instead
-      if (!silent) message.success("Analysis Complete!");
-    } catch (error) {
-        console.error(error);
-        if (!silent) message.error("Analysis failed");
-    } finally {
-        setIsAnalyzing(false);
-    }
-  };
-  */
+  
 
   // Auto-Analyze when frames change (Debounced) - DISABLED
   // React.useEffect(() => {
   //     if (frames.length >= 2) {
   //         const timer = setTimeout(() => {
-  //             handleAnalyzeEPV(true);
   //         }, 1000);
   //         return () => clearTimeout(timer);
   //     }
   // }, [frames, viewMode]);
 
-  const handleRecommendTactic = async () => {
-    setLoadingRecommendations(true);
-    setIsRecommendationModalVisible(true);
 
-    try {
-      // Prepare payload from current frame entities
-      const currentEntities = entitiesMap[viewMode];
-      const players = currentEntities.filter(e => e.type === 'player').map(p => ({
-        id: p.id,
-        position: p.position,
-        role: (p as PlayerType).role, // Assuming role is added to PlayerType
-        team: (p as PlayerType).team
-      }));
-      const ball = currentEntities.find(e => e.type === 'ball');
-
-      const payload = {
-        viewMode,
-        players,
-        ball: ball ? { position: ball.position } : null
-      };
-
-      // Call Backend API
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
-      
-      const response = await fetch(API_ENDPOINTS.MATCH_TACTIC, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setRecommendations(data.matches || []);
-    } catch (error) {
-      console.error('Error fetching recommendations:', error);
-      message.error('Failed to get tactic recommendations. Is the backend running?');
-      setRecommendations([]);
-    } finally {
-      setLoadingRecommendations(false);
-    }
-  };
-
-  const handleExportJSON = () => {
-    // --- Generate Trajectory Data (Interpolation) for EPV ---
-    const trajectoryFrames: any[] = [];
-    let currentTime = 0;
-    const dt = 0.04; // 25 FPS simulation
-    const simPlaybackSpeed = 1.0;
-
-    if (frames.length >= 2) {
-        for (let i = 0; i < frames.length - 1; i++) {
-            const currentFrame = frames[i];
-            const nextFrame = frames[i + 1];
-            
-            const currentEntities = currentFrame.entitiesMap[viewMode];
-            const nextEntities = nextFrame.entitiesMap[viewMode];
-            const currentActions = currentFrame.actionsMap[viewMode];
-
-            // Simulate transition
-            for (let progress = 0; progress <= 1; progress += (dt * simPlaybackSpeed)) {
-                const frameEntities = currentEntities.map(entity => {
-                    const nextEntity = nextEntities.find(e => e.id === entity.id);
-                    if (!nextEntity) return { id: entity.id, type: entity.type, team: (entity as any).team || 'neutral', x: entity.position.x, y: entity.position.y };
-
-                    let pos = { ...entity.position };
-                    let action: Action | undefined;
-
-                    if (entity.type === 'player') {
-                        action = currentActions.find(a => a.playerId === entity.id && ['move', 'dribble', 'screen', 'steal', 'block'].includes(a.type));
-                    } else if (entity.type === 'ball') {
-                        const ball = entity as BallType;
-                        if (ball.ownerId) {
-                            action = currentActions.find(a => a.playerId === ball.ownerId && (a.type === 'pass' || a.type === 'shoot'));
-                            if (!action) {
-                                const ownerAction = currentActions.find(a => a.playerId === ball.ownerId && ['move', 'dribble', 'steal', 'screen', 'block'].includes(a.type));
-                                if (ownerAction) action = ownerAction;
-                            }
-                        }
-                    }
-
-                    if (action && action.path.length >= 2) {
-                        let t = progress;
-                        let speedMultiplier = 1.5;
-                        if (action.speed === 'walk') speedMultiplier = 1.0;
-                        if (action.speed === 'sprint') speedMultiplier = 2.5;
-                        
-                        let localProgress = Math.min(1, progress * speedMultiplier);
-                        t = localProgress;
-
-                        if (action.type === 'steal') t = t * t;
-
-                        if (t >= 1) {
-                            pos = action.path[action.path.length - 1];
-                        } else {
-                            pos = getPointOnSpline(action.path, t);
-                        }
-                    } else {
-                        pos = {
-                            x: entity.position.x + (nextEntity.position.x - entity.position.x) * progress,
-                            y: entity.position.y + (nextEntity.position.y - entity.position.y) * progress
-                        };
-                    }
-
-                    return {
-                        id: entity.id,
-                        type: entity.type,
-                        team: (entity as any).team || 'neutral',
-                        x: pos.x,
-                        y: pos.y,
-                        ownerId: (entity as any).ownerId
-                    };
-                });
-
-                // Inject Ghost Defenders if enabled
-                if (showGhostDefense) {
-                    const ball = frameEntities.find(e => e.type === 'ball');
-                    const ballOwner = frameEntities.find(e => e.id === (ball as any)?.ownerId);
-                    const offenseTeam = (ballOwner as any)?.team || 'red';
-                    
-                    const ballObj = ball ? {
-                        ...ball,
-                        position: { x: ball.x, y: ball.y },
-                        ownerId: (ball as any).ownerId
-                    } : undefined;
-
-                    const currentPlayers = frameEntities
-                        .filter(e => e.type === 'player')
-                        .map(e => ({
-                            ...e,
-                            position: { x: e.x, y: e.y },
-                            role: 'player',
-                            team: e.team
-                        })) as any[];
-
-                    currentPlayers.forEach(player => {
-                        if (player.team === offenseTeam) {
-                            const { position: ghostPos } = calculateGhostDefender(
-                                player, 
-                                ballObj as any, 
-                                viewMode, 
-                                currentPlayers
-                            );
-                            
-                            frameEntities.push({
-                                id: `ghost_${player.id}`,
-                                type: 'player',
-                                team: offenseTeam === 'red' ? 'blue' : 'red',
-                                x: ghostPos.x,
-                                y: ghostPos.y
-                            });
-                        }
-                    });
-                }
-                
-                trajectoryFrames.push({
-                    timestamp: currentTime,
-                    entities: frameEntities
-                });
-                currentTime += dt;
-            }
-        }
-    }
-
-    // Prompt for Tactic Details
-    const tacticName = window.prompt("Enter Tactic Name:", "My Custom Tactic");
-    if (!tacticName) return; // Cancelled
-    
-    const tacticDesc = window.prompt("Enter Description (Optional):", "Created with Tactics Board");
-
-    const data = {
+  const handleExportJSON = () => {    const data = {
       meta: {
         version: "1.0",
         timestamp: new Date().toISOString(),
         viewMode: viewMode,
         frameCount: frames.length,
-        name: tacticName,
-        description: tacticDesc || ""
+        name: "Exported Tactic",
+        description: ""
       },
       frames: frames.map((frame, index) => {
         // Use current state for the current frame to ensure latest changes are captured
@@ -2086,8 +1732,7 @@ const TacticsBoard: React.FC = () => {
             color: a.color
           }))
         };
-      }),
-      epv_trajectory: trajectoryFrames
+      })
     };
 
     const jsonString = JSON.stringify(data, null, 2);
@@ -2100,8 +1745,24 @@ const TacticsBoard: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    message.success('Sketch data (with EPV trajectory) exported to JSON!');
+    message.success('Sketch data exported to JSON!');
   };
+
+  /**
+   * Retroactively assign actionTag to any action that was saved without one.
+   * hasBall heuristic: shoot/dribble/pass = true, move/screen/steal/block = false.
+   * Uses path[0] as start and path[last] as end coord.
+   */
+  const retagActions = (actions: Action[]): Action[] =>
+    actions.map(a => {
+      if (a.actionTag) return a; // already tagged — keep as-is
+      const start = a.path[0];
+      const end   = a.path[a.path.length - 1];
+      if (!start || !end) return a;
+      const hasBall = (a.type === 'shoot' || a.type === 'dribble' || a.type === 'pass');
+      const tag = deriveActionTag(a.type, hasBall, start.x, start.y, end.x, end.y);
+      return tag ? { ...a, actionTag: tag } : a;
+    });
 
   const handleLoadTactic = async (tacticId: string, loadMode: 'play' | 'edit' = 'play') => {
     try {
@@ -2133,7 +1794,7 @@ const TacticsBoard: React.FC = () => {
           const newFrames: Frame[] = data.frames.map((f: any) => {
               // Reconstruct entities and actions for the specific viewMode
               const entities = f.entities || [];
-              const actions = f.actions || [];
+              const actions = retagActions(f.actions || []);
               
               // We populate both viewModes with the same data to prevent crashes, 
               // but ideally we should respect the viewMode it was created in.
@@ -2332,9 +1993,18 @@ const TacticsBoard: React.FC = () => {
             finalPreviewImage = values.custom_image_url;
         }
 
+        const selectedTags: string[] = Array.isArray(values.tags) ? values.tags : [];
+        const playtypes = selectedTags.map((code) => ({
+          code,
+          name: ATOMIC_ACTIONS[code]?.name || code,
+          description: ATOMIC_ACTIONS[code]?.description || '',
+        }));
+
         const tacticData = {
             id: currentTacticId || uuidv4(),
             ...values,
+          tags: selectedTags,
+          playtypes,
             preview_image: finalPreviewImage,
             animation_data: {
                 meta: {
@@ -2366,6 +2036,8 @@ const TacticsBoard: React.FC = () => {
         setCurrentTacticId(tacticData.id);
         setCurrentTacticMetadata({
             ...values,
+          tags: selectedTags,
+          playtypes,
             preview_image: finalPreviewImage
         });
         
@@ -2380,63 +2052,21 @@ const TacticsBoard: React.FC = () => {
     }
   };
 
-  // Player Search Modal
-  const playerSearchModal = () => {
-    return (
-      <Modal
-        title="Assign Real NBA Player"
-        visible={isPlayerSearchModalVisible}
-        onCancel={() => setIsPlayerSearchModalVisible(false)}
-        footer={null}
-        width={800}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <Input.Search 
-            placeholder="Search for a player by name"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            onSearch={handleSearchPlayers}
-            loading={loadingPlayers}
-          />
-          
-          <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-            {loadingPlayers ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
-                <Spin size="large" tip="Loading players..." />
-              </div>
-            ) : (
-              <List
-                dataSource={searchResults}
-                renderItem={item => (
-                  <Card 
-                    style={{ marginBottom: '10px', cursor: 'pointer' }}
-                    onClick={() => handleAssignPlayer(item)}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Avatar src={item.photoUrl} size={64} />
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                        <div style={{ color: '#888', fontSize: '14px' }}>
-                          {item.team} - {item.position}
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-              />
-            )}
-          </div>
-        </div>
-      </Modal>
-    );
-  };
+  /* --- Legacy NBA Player Search Modal render fn (commented out) ---
+  const playerSearchModal = () => { ... };
+  --- end NBA --- */
 
-  // Context Menu Handler for Player
+  // Context Menu Handler for Player — right-click opens tag assignment
   const handlePlayerContextMenu = (e: any, id: string) => {
     e.evt.preventDefault();
     setTargetPlayerId(id);
-    // Show context menu using Antd Dropdown logic or just open modal directly for now
-    // For simplicity, let's open a modal asking if they want to assign a player
+    setIsTagModalVisible(true);
+  };
+
+  /* --- Legacy NBA context menu (commented out) ---
+  const handlePlayerContextMenuNBA = (e: any, id: string) => {
+    e.evt.preventDefault();
+    setTargetPlayerId(id);
     Modal.confirm({
       title: 'Assign Real NBA Player',
       content: 'Do you want to assign a real NBA player profile to this entity?',
@@ -2447,119 +2077,107 @@ const TacticsBoard: React.FC = () => {
       }
     });
   };
+  --- end NBA --- */
 
-  const handleSearchPlayers = async () => {
-    if (!searchQuery.trim()) return;
-    setLoadingPlayers(true);
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-      
-      const response = await fetch(`${API_ENDPOINTS.SEARCH_PLAYERS}?name=${encodeURIComponent(searchQuery)}`, {
-        signal: controller.signal
+  // Number → position mapping for auto-role derivation
+  const NUMBER_TO_ROLE: Record<string, string> = { '1': 'PG', '2': 'SG', '3': 'SF', '4': 'PF', '5': 'C' };
+
+  // Assign a lineup tag to the right-clicked player (role is auto-derived from jersey number)
+  const handleAssignTag = (tag: OffensiveRoleCode) => {
+    if (!targetPlayerId) return;
+    const updateEntities = (list: BoardEntity[]) =>
+      list.map(e => {
+        if (e.id === targetPlayerId && e.type === 'player') {
+          const p = e as PlayerType;
+          const autoRole = NUMBER_TO_ROLE[p.number] ?? p.role;
+          return { ...p, playerTag: tag, role: autoRole };
+        }
+        return e;
       });
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) throw new Error(`Server error: ${response.status}`);
-      const data = await response.json();
-      setSearchResults(data);
-    } catch (error: any) {
-      console.error('Error searching players:', error);
-      if (error.name === 'AbortError') {
-        message.error('Request timeout - backend may be sleeping. Please try again.');
-      } else {
-        message.error(`Failed to search players: ${error.message}`);
-      }
-    } finally {
-      setLoadingPlayers(false);
-    }
+
+    setEntitiesMap(prev => ({
+      ...prev,
+      [viewMode]: updateEntities(prev[viewMode])
+    }));
+    setFrames(prevFrames =>
+      prevFrames.map(frame => ({
+        ...frame,
+        entitiesMap: {
+          ...frame.entitiesMap,
+          [viewMode]: updateEntities(frame.entitiesMap[viewMode])
+        }
+      }))
+    );
+    setIsTagModalVisible(false);
+    message.success(`Tag "${tag}" assigned!`);
   };
 
-  const handleAssignPlayer = async (nbaPlayer: any) => {
-    if (!targetPlayerId) return;
+  // Legacy NBA search/assign handlers removed (handleSearchPlayers, handleAssignPlayer)
 
-    // Fetch stats for this player
-    let stats = undefined;
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 30000);
-        
-        const response = await fetch(API_ENDPOINTS.GET_PLAYER_STATS(nbaPlayer.id), {
-          signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        
-        if (response.ok) {
-            stats = await response.json();
-        }
-    } catch (e) {
-        console.warn("Could not fetch stats", e);
-    }
+  // ---------------------------------------------------------------------------
+  // AI Chat Tool Call Handlers
+  // ---------------------------------------------------------------------------
 
-    // Update ALL frames to ensure consistency
-    setFrames(prevFrames => {
-        return prevFrames.map(frame => {
-            const updatedEntitiesMap = { ...frame.entitiesMap };
-            // Update for both full and half views if needed, but usually ID is unique across views? 
-            // Actually viewMode separates them. We should update the current viewMode's entities.
-            // Or better: update in all viewModes if the ID exists?
-            // For now, let's stick to current viewMode as IDs might not be shared across modes in this app's logic (usually they are separate boards)
-            
-            ['full', 'half'].forEach((mode) => {
-                const vMode = mode as ViewMode;
-                const entities = [...updatedEntitiesMap[vMode]];
-                const idx = entities.findIndex(e => e.id === targetPlayerId);
-                
-                if (idx !== -1 && entities[idx].type === 'player') {
-                    const player = entities[idx] as PlayerType;
-                    entities[idx] = {
-                        ...player,
-                        profile: {
-                            id: nbaPlayer.id,
-                            name: nbaPlayer.name,
-                            photoUrl: nbaPlayer.photoUrl,
-                            stats: stats
-                        }
-                    };
-                    updatedEntitiesMap[vMode] = entities;
-                }
-            });
-            
-            return {
-                ...frame,
-                entitiesMap: updatedEntitiesMap
-            };
-        });
-    });
+  /** Role lookup for jersey numbers 1-5 */
+  const AI_PLAYER_ROLES: Record<string, string> = {
+    '1': 'PG', '2': 'SG', '3': 'SF', '4': 'PF', '5': 'C',
+  };
 
-    // Also update current state (entitiesMap) to reflect changes immediately
+  /** Move a player by jersey number. normX/normY are 0-100 (normalised court).
+   *  If the player doesn't exist on the board yet, it is created automatically. */
+  const handleAIMovePlayer = (playerNumber: string, normX: number, normY: number) => {
+    const canvasX = (normX / 100) * COURT_WIDTH;
+    const canvasY = (normY / 100) * COURT_HEIGHT;
+    const numStr = String(playerNumber);
+
     setEntitiesMap(prev => {
-      const currentEntities = [...prev[viewMode]];
-      const entityIndex = currentEntities.findIndex(e => e.id === targetPlayerId);
-      if (entityIndex !== -1 && currentEntities[entityIndex].type === 'player') {
-        const player = currentEntities[entityIndex] as PlayerType;
-        currentEntities[entityIndex] = {
-          ...player,
-          profile: {
-            id: nbaPlayer.id,
-            name: nbaPlayer.name,
-            photoUrl: nbaPlayer.photoUrl,
-            stats: stats
-          }
+      const updated = { ...prev };
+      const list = [...(prev[viewMode] || [])];
+      const idx = list.findIndex(e => e.type === 'player' && (e as any).number === numStr);
+
+      if (idx !== -1) {
+        // Player exists �?just update position
+        list[idx] = { ...list[idx], position: { x: canvasX, y: canvasY } };
+      } else {
+        // Player not on board �?create it so AI tactics work on an empty board
+        const newPlayer: import('../../types').Player = {
+          id: `ai-player-${numStr}-${Date.now()}`,
+          type: 'player',
+          number: numStr,
+          team: 'blue',
+          position: { x: canvasX, y: canvasY },
+          role: AI_PLAYER_ROLES[numStr] ?? 'PG',
         };
+        list.push(newPlayer);
       }
-      return {
-        ...prev,
-        [viewMode]: currentEntities
-      };
+
+      updated[viewMode] = list;
+      return updated;
     });
+  };
 
-    if (targetPlayerId) {
-        setSelectedId(targetPlayerId);
-    }
+  /** Transfer ball ownership between players by jersey number. */
+  const handleAIPassBall = (fromNumber: string, toNumber: string) => {
+    setEntitiesMap(prev => {
+      const updated = { ...prev };
+      const list = [...(prev[viewMode] || [])];
+      const receiver = list.find(e => e.type === 'player' && (e as any).number === String(toNumber));
+      const ballIdx = list.findIndex(e => e.type === 'ball');
+      if (receiver && ballIdx !== -1) {
+        list[ballIdx] = {
+          ...list[ballIdx],
+          position: { ...receiver.position },
+          ownerId: receiver.id,
+        } as any;
+      }
+      updated[viewMode] = list;
+      return updated;
+    });
+  };
 
-    setIsPlayerSearchModalVisible(false);
-    message.success(`Assigned ${nbaPlayer.name} to player!`);
+  /** Move screener to the screen position (normalised 0-100). */
+  const handleAIDrawScreen = (screenerNumber: string, normX: number, normY: number) => {
+    handleAIMovePlayer(screenerNumber, normX, normY);
   };
 
   return (
@@ -2569,7 +2187,8 @@ const TacticsBoard: React.FC = () => {
       background: APP_BACKGROUND,
       minHeight: '100vh',
       width: '100%',
-      overflow: 'hidden'
+      overflow: 'hidden',
+      position: 'relative',
     }}>
       
       {/* Left Sidebar */}
@@ -2605,40 +2224,13 @@ const TacticsBoard: React.FC = () => {
           active={isTacticsLibraryVisible}
         />
 
-        <SidebarButton 
-          icon={<SaveOutlined />} 
-          onClick={handleOpenSaveModal}
-          tooltip="Save to Gallery"
-        />
+<SidebarButton
+            icon={<SaveOutlined />}
+            onClick={handleOpenSaveModal}
+            tooltip="Save to Gallery"
+          />
 
-        <SidebarButton 
-          icon={<RobotOutlined />} 
-          onClick={() => setIsChatPanelVisible(true)}
-          tooltip="AI 战术助手"
-          active={isChatPanelVisible}
-        />
-
-        <SidebarButton 
-          icon={<BulbOutlined />} 
-          onClick={handleRecommendTactic}
-          tooltip="Recommend Tactic (AI)"
-        />
-
-        {/* Commented out Analyze button
-        <SidebarButton 
-          icon={isAnalyzing ? <Spin indicator={<LineChartOutlined spin />} /> : <LineChartOutlined />} 
-          onClick={() => {
-              if (!showAnalysisPanel) {
-                  handleAnalyzeEPV();
-                  setShowAnalysisPanel(true);
-              } else {
-                  setShowAnalysisPanel(false);
-              }
-          }}
-          tooltip="Analyze Expected Score"
-          active={showAnalysisPanel}
-        />
-        */}
+        
 
         <SidebarButton 
           icon={showGhostDefense ? <EyeOutlined /> : <EyeInvisibleOutlined />} 
@@ -2647,6 +2239,12 @@ const TacticsBoard: React.FC = () => {
           tooltip="Toggle Ghost Defense"
         />
 
+        <SidebarButton 
+          icon={<RadarChartOutlined />} 
+          onClick={() => setIsDiagnosticOpen(prev => !prev)}
+          active={isDiagnosticOpen}
+          tooltip="AI Lineup Diagnostics"
+        />
         <SidebarButton 
           icon={<DeleteOutlined />} 
           onClick={clearBoard}
@@ -2726,7 +2324,7 @@ const TacticsBoard: React.FC = () => {
                     {/* --- Z-Index Fix: Render Layers in Order --- */}
 
                     {/* 1. Render Players First (Bottom Layer) */}
-{/* 1. 先渲染所有球员 (底层) */}
+{/* 1. 先渲染所有球�?(底层) */}
                   {entities.filter(e => e.type === 'player').map(entity => {
                       const hasBall = entities.some(e => e.type === 'ball' && (e as BallType).ownerId === entity.id);
                       return (
@@ -2745,16 +2343,16 @@ const TacticsBoard: React.FC = () => {
                           onRotate={handleEntityRotate}
                           stageWidth={stageWidth}
                           stageHeight={stageHeight}
-                          onContextMenu={handlePlayerContextMenu}
                           viewMode={viewMode}
                           scale={(entity as any).scale || 1}
                           armExtension={(entity as any).armExtension || 0}
                           actionType={(entity as any).actionType}
+                          isWarning={fitErrors.some(err => err.playerId === entity.id)}
                         />
                       );
                   })}
 
-                  {/* 2. 后渲染所有球 (顶层 - 确保球永远浮在球员上方) */}
+                  {/* 2. 后渲染所有球 (顶层 - 确保球永远浮在球员上�? */}
                   {entities.filter(e => e.type === 'ball').map(entity => (
                       <Ball 
                         key={entity.id} 
@@ -2795,6 +2393,12 @@ const TacticsBoard: React.FC = () => {
                     {frames[currentFrameIndex].description}
                   </div>
                 )}
+
+                {/* Roster-Fit Error Overlay (Phase 4 – Micro-View) */}
+                <RosterFitPanel
+                  errors={fitErrors}
+                  players={entities.filter(e => e.type === 'player') as PlayerType[]}
+                />
               </div>
               {renderTopBar()}
             </div>
@@ -2804,36 +2408,22 @@ const TacticsBoard: React.FC = () => {
                 <PlayerInfoPanel 
                   players={entities.filter(e => e.type === 'player') as PlayerType[]} 
                   mode="bottom"
+                  onTagClick={(id) => {
+                    setTargetPlayerId(id);
+                    setIsTagModalVisible(true);
+                  }}
                 />
             </div>
           </div>
 
-          {/* Right Panel: AssetsBar or AnalysisPanel */}
-          <div style={{ 
-              width: showAnalysisPanel ? '400px' : '100px', 
-              height: stageHeight, 
-              display: 'flex', 
-              flexDirection: 'column', 
-              justifyContent: 'center',
-              transition: 'width 0.3s ease'
-          }}>
-             {/* showAnalysisPanel is hardcoded to false, hiding the analysis panel code below */}
-             {showAnalysisPanel ? (
-                 <div style={{ 
-                     width: '100%', 
-                     height: '100%', 
-                     background: 'rgba(0,0,0,0.4)', 
-                     borderRadius: '8px',
-                     padding: '10px',
-                     display: 'flex',
-                     flexDirection: 'column'
-                 }}>
-                    {/* ... EPV Panel JSX ... */}
-                 </div>
-             ) : (
-                 !isAnimationMode && <AssetsBar onDragStart={() => {}} vertical={true} />
-             )}
-          </div>
+          {/* Right Panel: AssetsBar */}
+          <div style={{
+              width: '100px',
+              height: stageHeight,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center'
+          }}>             {!isAnimationMode && <AssetsBar onDragStart={() => {}} vertical={true} />} `n          </div>
         </div>
 
         {/* Animation Controls (Absolute positioned at bottom) */}
@@ -2881,129 +2471,75 @@ const TacticsBoard: React.FC = () => {
         </div>
         )}
 
-        {/* Recommendation Modal */}
-        <Modal
-          title="Tactic Recommendations"
-          visible={isRecommendationModalVisible}
-          onCancel={() => setIsRecommendationModalVisible(false)}
-          footer={null}
-          width={800}
-        >
-          <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
-            {loadingRecommendations ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: '50px' }}>
-                <Spin size="large" tip="Loading recommendations..." />
+        
+        {/* Player Tag Assignment Modal (right-click on player) */}
+        {targetPlayerId && (() => {
+          const currentPlayer = entitiesMap[viewMode].find(e => e.id === targetPlayerId) as PlayerType | undefined;
+          return (
+            <Modal
+              title={<span style={{ color: '#fff', fontSize: '18px', fontWeight: 600 }}>Tag Player #{currentPlayer?.number || ''}</span>}
+              open={isTagModalVisible}
+              onCancel={() => setIsTagModalVisible(false)}
+              footer={null}
+              destroyOnClose
+              className="dark-theme-modal"
+              styles={{
+                mask: { backdropFilter: 'blur(8px)', backgroundColor: 'rgba(0,0,0,0.6)' },
+                content: { backgroundColor: '#1E232F', border: '1px solid rgba(250, 173, 20, 0.25)', boxShadow: '0 8px 32px rgba(0,0,0,0.8)', padding: '24px' },
+                header: { backgroundColor: 'transparent', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '16px', marginBottom: '20px' },
+                body: { color: '#a8b4cc' }
+              }}
+              closeIcon={<div style={{ color: '#8f9bb3', fontSize: '16px' }}>×</div>}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: 24 }}>
+                <div style={{
+                    width: 40, height: 40, borderRadius: '50%', 
+                    background: currentPlayer?.team === 'red' ? '#e53e3e' : '#3182ce', 
+                    color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center', 
+                    fontSize: '18px', fontWeight: 'bold', marginRight: 15,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.1)'
+                }}>
+                    {currentPlayer?.number}
+                </div>
+                <div>
+                  <div style={{ color: '#fff', fontSize: 16, fontWeight: 500 }}>Select Role Identity</div>
+                  <div style={{ color: '#8f9bb3', fontSize: 12 }}>Auto-assigned pos: <strong style={{ color: '#faad14' }}>{currentPlayer?.role || 'Unknown'}</strong></div>
+                </div>
               </div>
-            ) : recommendations.length > 0 ? (
-              <List
-                dataSource={recommendations}
-                renderItem={item => (
-                  <Card 
-                    style={{ marginBottom: '10px', cursor: 'pointer' }}
-                    onClick={() => {
-                      // Apply this tactic's movements to the board
-                      const { players, ball } = item;
-                      
-                      setEntitiesMap(prev => {
-                        const updatedEntities = { ...prev };
-                        
-                        // Update player positions
-                        players.forEach((p: any) => {
-                          const player = updatedEntities[viewMode].find(e => e.id === p.id);
-                          if (player && player.type === 'player') {
-                            player.position = p.position;
-                            (player as PlayerType).rotation = p.rotation || 0;
-                          }
-                        });
-                        
-                        // Update ball position
-                        if (ball) {
-                          const b = updatedEntities[viewMode].find(e => e.type === 'ball');
-                          if (b) {
-                            b.position = ball.position;
-                            b.ownerId = undefined; // Release ownership
-                          }
-                        }
-                        
-                        return updatedEntities;
-                      });
-                      
-                      setIsRecommendationModalVisible(false);
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <div>
-                        <Tag color="green">{item.tacticType}</Tag>
-                        <span style={{ marginLeft: '8px', fontWeight: 'bold' }}>{item.name}</span>
-                      </div>
-                      <div>
-                        <span style={{ fontSize: '14px', color: '#888' }}>{item.quality}</span>
-                      </div>
-                    </div>
-                    <div style={{ marginTop: '10px' }}>
-                      {item.players.map((p: any) => (
-                        <div key={p.id} style={{ marginBottom: '4px' }}>
-                          <Tag color="blue">{p.role}</Tag> {p.id} - {p.position.x.toFixed(1)}, {p.position.y.toFixed(1)}
-                        </div>
-                      ))}
-                    </div>
-                    {item.ball && (
-                      <div style={{ marginTop: '10px' }}>
-                        <Tag color="orange">Ball</Tag> {item.ball.position.x.toFixed(1)}, {item.ball.position.y.toFixed(1)}
-                      </div>
-                    )}
-                  </Card>
-                )}
-              />
-            ) : (
-              <div style={{ textAlign: 'center', padding: '20px' }}>
-                <p>No tactics found for the current setup.</p>
-                <Button type="primary" onClick={handleRecommendTactic}>
-                  Get Recommendations
-                </Button>
-              </div>
-            )}
-          </div>
-        </Modal>
-
-        {/* Player Search Modal */}
-        <Modal
-          title="Assign NBA Player"
-          open={isPlayerSearchModalVisible}
-          onCancel={() => setIsPlayerSearchModalVisible(false)}
-          footer={null}
-        >
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-            <Input 
-              placeholder="Search NBA Player (e.g. Curry)" 
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              onPressEnter={handleSearchPlayers}
-            />
-            <Button type="primary" icon={<SearchOutlined />} onClick={handleSearchPlayers} loading={loadingPlayers}>
-              Search
-            </Button>
-          </div>
-          
-          <List
-            loading={loadingPlayers}
-            dataSource={searchResults}
-            renderItem={(item: any) => (
-              <List.Item
-                actions={[<Button type="link" onClick={() => handleAssignPlayer(item)}>Assign</Button>]}
+              <Form
+                layout="vertical"
+                initialValues={{ tag: currentPlayer?.playerTag || undefined }}
+                onFinish={(values) => handleAssignTag(values.tag as OffensiveRoleCode)}
               >
-                <List.Item.Meta
-                  avatar={<Avatar src={item.photoUrl} />}
-                  title={item.name}
-                  description={item.isActive ? <Tag color="green">Active</Tag> : <Tag color="red">Inactive</Tag>}
-                />
-              </List.Item>
-            )}
-            style={{ maxHeight: '400px', overflowY: 'auto' }}
-          />
-        </Modal>
-
-        {/* EPV Analysis Modal - REMOVED (Replaced by Right Panel) */}
+                <Form.Item 
+                  label={<span style={{ color: '#a8b4cc', fontSize: 13, textTransform: 'uppercase', letterSpacing: 0.5 }}>Role Tag</span>} 
+                  name="tag" 
+                  rules={[{ required: true, message: 'Please select a role tag' }]}
+                >
+                  <Select 
+                    placeholder="Select a role..." 
+                    size="large"
+                    dropdownStyle={{ backgroundColor: '#252B3B', border: '1px solid rgba(255,255,255,0.1)' }}
+                  >
+                    {OFFENSIVE_ROLE_TAG_OPTIONS.map(t => (
+                      <Select.Option key={t.value} value={t.value}>
+                        <strong style={{ color: '#faad14', marginRight: 8, display: 'inline-block', width: 40 }}>{t.value}</strong> 
+                        <span style={{ color: '#d1d8e6' }}>{t.label.split(' - ')[0]}</span>
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                <Button htmlType="submit" block style={{ 
+                  marginTop: '12px', height: '46px', fontSize: '15px', fontWeight: 600, 
+                  background: 'linear-gradient(135deg, #faad14 0%, #d48806 100%)', 
+                  border: 'none', color: '#141414', borderRadius: '8px'
+                }}>
+                  Confirm Identity
+                </Button>
+              </Form>
+            </Modal>
+          );
+        })()}
       </div>
       
       <TacticsLibrary 
@@ -3158,7 +2694,13 @@ const TacticsBoard: React.FC = () => {
             </Form.Item>
 
             <Form.Item name="tags" label="Tags">
-                <Select mode="tags" placeholder="Press enter to add tags (e.g. Pick and Roll, Spacing)" />
+              <Select
+                mode="multiple"
+                options={atomicActionTagOptions}
+                placeholder="Select atomic actions (e.g. PnR_BH, Spot_Up, Cut)"
+                optionFilterProp="label"
+                showSearch
+              />
             </Form.Item>
 
             <Form.Item label="External Links">
@@ -3174,212 +2716,30 @@ const TacticsBoard: React.FC = () => {
         </Form>
       </Modal>
 
-      <ChatPanel
-        visible={isChatPanelVisible}
-        onClose={() => setIsChatPanelVisible(false)}
-        currentTactic={{
-          meta: {
-            name: currentTacticDescription || 'Current Tactic',
-            frameCount: frames.length,
-          },
-          frames: frames.map((frame, idx) => ({
-            id: frame.id,
-            index: idx,
-            entities: frame.entitiesMap[viewMode],
-            actionsMap: frame.actionsMap,
-          })),
-        }}
-        onApplyTactic={(tactic) => {
-          // Apply the AI-generated tactic to the board
-          console.log('Applying tactic:', tactic);
-          
-          try {
-            // Convert AI tactic format to internal format
-            const newFrames: Frame[] = [];
-            const tacticFrames = tactic.frames || [];
-            
-            // Helper function to convert coordinates
-            const convertCoord = (val: number, max: number) => {
-              if (typeof val !== 'number' || isNaN(val)) return max / 2;
-              // If value looks like percentage (0-100), convert to pixels
-              if (val >= 0 && val <= 100) {
-                return (val / 100) * max;
-              }
-              return val;
-            };
-            
-            // If no frames but has steps, convert steps to a single frame
-            if (tacticFrames.length === 0 && tactic.steps) {
-              // Create entities from steps (use unique start positions)
-              const playerPositions = new Map<string, { x: number; y: number }>();
-              const actions: Action[] = [];
-              let ballOwnerId: string | undefined;
-              
-              tactic.steps.forEach((step: any, idx: number) => {
-                const playerNum = String(step.player_number || step.playerNumber || '1');
-                const startPos = step.start_pos || step.startPos || { x: 400, y: 300 };
-                const endPos = step.end_pos || step.endPos || startPos;
-                
-                const startX = convertCoord(startPos.x, 800);
-                const startY = convertCoord(startPos.y, 682);
-                const endX = convertCoord(endPos.x, 800);
-                const endY = convertCoord(endPos.y, 682);
-                
-                // Store initial position
-                if (!playerPositions.has(playerNum)) {
-                  playerPositions.set(playerNum, { x: startX, y: startY });
-                  // First player with dribble action owns the ball
-                  if (!ballOwnerId && (step.action === 'dribble' || step.action === 'pass')) {
-                    ballOwnerId = `ai-player-red-${playerNum}`;
-                  }
-                }
-                
-                // Create action with valid path
-                const playerId = `ai-player-red-${playerNum}`;
-                actions.push({
-                  id: `ai-action-${idx}`,
-                  type: (step.action || 'move') as ActionType,
-                  playerId,
-                  path: [
-                    { x: startX, y: startY },
-                    { x: endX, y: endY }
-                  ],
-                });
-              });
-              
-              // Create player entities
-              const entities: BoardEntity[] = [];
-              playerPositions.forEach((pos, num) => {
-                entities.push({
-                  id: `ai-player-red-${num}`,
-                  type: 'player',
-                  number: num,
-                  team: 'red',
-                  position: { x: pos.x, y: pos.y },
-                });
-              });
-              
-              // Add ball
-              const ballOwnerPos = ballOwnerId ? 
-                playerPositions.get(ballOwnerId.replace('ai-player-red-', '')) : 
-                playerPositions.get('1');
-              entities.push({
-                id: 'ai-ball',
-                type: 'ball',
-                position: ballOwnerPos ? { x: ballOwnerPos.x, y: ballOwnerPos.y } : { x: 400, y: 300 },
-                ownerId: ballOwnerId || (playerPositions.has('1') ? 'ai-player-red-1' : undefined),
-              });
-              
-              newFrames.push({
-                id: 'ai-frame-1',
-                entitiesMap: { full: entities, half: [] },
-                actionsMap: { full: actions, half: [] },
-              });
-            } else if (tacticFrames.length > 0) {
-              // Process frames format
-              tacticFrames.forEach((frame: any, frameIdx: number) => {
-                const entities: BoardEntity[] = [];
-                const actions: Action[] = [];
-                let ballOwnerId: string | undefined;
-                
-                // Process players
-                const players = frame.players || [];
-                players.forEach((p: any) => {
-                  const x = convertCoord(p.x, 800);
-                  const y = convertCoord(p.y, 682);
-                  const playerId = `ai-player-${p.team || 'red'}-${p.number}`;
-                  
-                  entities.push({
-                    id: playerId,
-                    type: 'player',
-                    number: String(p.number),
-                    team: (p.team || 'red') as TeamType,
-                    position: { x, y },
-                  });
-                  
-                  // Track ball owner
-                  if (p.has_ball || p.hasBall) {
-                    ballOwnerId = playerId;
-                  }
-                });
-                
-                // Add ball entity
-                const ballOwner = entities.find(e => e.id === ballOwnerId);
-                entities.push({
-                  id: `ai-ball-${frameIdx}`,
-                  type: 'ball',
-                  position: ballOwner ? { ...ballOwner.position } : { x: 400, y: 400 },
-                  ownerId: ballOwnerId,
-                });
-                
-                // Process actions
-                const frameActions = frame.actions || [];
-                frameActions.forEach((a: any, actionIdx: number) => {
-                  const playerNum = String(a.player_number || a.playerNumber);
-                  // Find player by number in any team
-                  const player = entities.find(e => 
-                    e.type === 'player' && (e as PlayerType).number === playerNum
-                  );
-                  const playerId = player?.id || `ai-player-red-${playerNum}`;
-                  
-                  // Convert path coordinates
-                  const rawPath = a.path || [];
-                  const path: Position[] = rawPath.map((pt: any) => {
-                    if (Array.isArray(pt)) {
-                      return { 
-                        x: convertCoord(pt[0], 800), 
-                        y: convertCoord(pt[1], 682) 
-                      };
-                    }
-                    return { 
-                      x: convertCoord(pt.x, 800), 
-                      y: convertCoord(pt.y, 682) 
-                    };
-                  }).filter((pt: Position) => !isNaN(pt.x) && !isNaN(pt.y));
-                  
-                  // Ensure path has at least 2 points
-                  if (path.length === 1 && player) {
-                    path.unshift({ ...player.position });
-                  } else if (path.length === 0 && player) {
-                    path.push({ ...player.position }, { ...player.position });
-                  }
-                  
-                  if (path.length >= 2) {
-                    actions.push({
-                      id: `ai-action-${frameIdx}-${actionIdx}`,
-                      type: (a.action_type || a.actionType || 'move') as ActionType,
-                      playerId,
-                      path,
-                    });
-                  }
-                });
-                
-                newFrames.push({
-                  id: `ai-frame-${frameIdx + 1}`,
-                  entitiesMap: { full: entities, half: [] },
-                  actionsMap: { full: actions, half: [] },
-                });
-              });
-            }
-            
-            if (newFrames.length > 0) {
-              setFrames(newFrames);
-              setCurrentFrameIndex(0);
-              setEntitiesMap(newFrames[0].entitiesMap);
-              setActionsMap(newFrames[0].actionsMap);
-              setCurrentTacticDescription(tactic.name || tactic.tactic_name || 'AI Generated Tactic');
-              message.success(`Tactic "${tactic.name || tactic.tactic_name || 'AI Tactic'}" applied!`);
-            } else {
-              message.warning('No valid frames found in tactic data');
-            }
-          } catch (error) {
-            console.error('Error applying tactic:', error);
-            message.error('Failed to apply tactic: ' + String(error));
-          }
-        }}
+      {/* AI Lineup Diagnostic Panel */}
+      <LineupDiagnosticPanel
+        isOpen={isDiagnosticOpen}
+        onClose={() => setIsDiagnosticOpen(false)}
+        boardPlayers={entities.filter(e => e.type === 'player') as PlayerType[]}
+        boardActionFrames={frames.map((frame, index) => ({
+          frameIndex: index,
+          actions: index === currentFrameIndex ? actionsMap[viewMode] : frame.actionsMap[viewMode],
+        }))}
       />
     </div>
   );
 };
 
 export default TacticsBoard;
+
+
+
+
+
+
+
+
+
+
+
+

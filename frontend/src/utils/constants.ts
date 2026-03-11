@@ -25,3 +25,5 @@ export const TEAM_COLORS: Record<string, string> = {
   grey: '#8CA3B0', // Low Sat Grey Blue
   cyan: '#1abc9c'
 };
+
+export const POSITIONS = ['PG', 'SG', 'SF', 'PF', 'C'];

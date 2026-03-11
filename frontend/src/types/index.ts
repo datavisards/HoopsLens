@@ -5,6 +5,7 @@ export interface Position {
 
 export type TeamType = 'red' | 'blue' | 'green' | 'yellow' | 'purple' | 'orange' | 'black' | 'white' | 'grey' | 'cyan';
 export type ViewMode = 'full' | 'half';
+export type OffensiveRoleCode = 'STB' | 'ISA' | 'PUB' | 'SBH' | 'TRA' | 'PBH' | 'SUS' | 'RCB' | 'OSS' | 'WWH';
 
 export interface PlayerProfile {
   id: number;
@@ -39,6 +40,7 @@ export interface Player {
   position: Position;
   rotation?: number;
   role?: string; // PG, SG, SF, PF, C
+  playerTag?: OffensiveRoleCode;
   profile?: PlayerProfile;
 }
 
@@ -61,6 +63,17 @@ export interface Action {
   color?: string;
   speed?: SpeedLevel;
   label?: string; // For "Danmaku" description
+  actionTag?: string; // Atomic action code auto-derived from draw gesture (e.g. 'Cut', 'PnR_BH')
+}
+
+// Roster-Fit Engine output
+export interface FitError {
+  playerId: string;
+  actionId: string;
+  actionTag: string;
+  fitScore: number;    // 0-100, how well the player's role supplies this action
+  currentRole: string; // OffensiveRoleCode
+  frameIndex?: number;
 }
 
 export type BoardEntity = Player | Ball;

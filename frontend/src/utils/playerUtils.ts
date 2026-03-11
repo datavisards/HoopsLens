@@ -1,7 +1,30 @@
 import { Player, Position, Ball } from '../types';
 import { COURT_WIDTH, COURT_HEIGHT, SCALE } from './constants';
 
+const ROLE_SIZE_RADIUS: Record<string, number> = {
+  PUB: 18,
+  RCB: 18,
+  STB: 18,
+  ISA: 14,
+  WWH: 14,
+  SUS: 14,
+  OSS: 14,
+  TRA: 14,
+  PBH: 10,
+  SBH: 10,
+};
+
 export const getPlayerRadius = (player: Player): number => {
+  const taggedRole = player.playerTag ? String(player.playerTag).toUpperCase() : '';
+  if (taggedRole && ROLE_SIZE_RADIUS[taggedRole]) {
+    const roleRadius = ROLE_SIZE_RADIUS[taggedRole];
+    // Readability safeguard: SG markers should not be too small on canvas
+    if (String(player.role || '').toUpperCase() === 'SG') {
+      return Math.max(roleRadius, 12);
+    }
+    return roleRadius;
+  }
+
   const baseRadius = 14;
   if (!player.profile?.stats) return baseRadius;
 
