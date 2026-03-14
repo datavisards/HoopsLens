@@ -1,0 +1,35 @@
+{
+  "id": "3e3a0e68-99f0-41c2-a30f-c39340308e1b",
+  "preview_source": "custom",
+  "name": "Nellie Ball",
+  "category": "Strategy & Concepts",
+  "description": "An innovative, fast-paced offensive strategy developed by Hall of Fame coach Don Nelson. Considered the precursor to modern 'small ball' and 'pace and space,' Nellie Ball aggressively defies traditional basketball positions. It frequently utilizes a 'point forward' (a forward with point guard ball-handling skills) to initiate the offense, pulling the opponent's shot-blocker away from the rim. The system relies heavily on creating defensive mismatches, extreme run-and-gun transition offense, and a high volume of three-point shooting, often at the expense of traditional post-up play and interior defense.",
+  "tags": [],
+  "external_links": {
+    "article": "https://en.wikipedia.org/wiki/Nellie_Ball",
+    "video": "https://www.youtube.com/watch?v=Wik54yh3V90"
+  },
+  "sub_category": "General Strategy",
+  "custom_image_url": "https://images2.minutemediacdn.com/image/upload/c_fill,w_1200,ar_4:3,f_auto,q_auto,g_auto/shape/cover/sport/dataimagewebpbase64UklGRt6ZBgBXRUJQVlA4INKZBgBQOBa-337ca0165b78ae5b93cb44f51dc2b8ac.jpg",
+  "playtypes": [],
+  "preview_image": "https://images2.minutemediacdn.com/image/upload/c_fill,w_1200,ar_4:3,f_auto,q_auto,g_auto/shape/cover/sport/dataimagewebpbase64UklGRt6ZBgBXRUJQVlA4INKZBgBQOBa-337ca0165b78ae5b93cb44f51dc2b8ac.jpg",
+  "animation_data": {
+    "meta": {
+      "version": "2.0",
+      "timestamp": "2026-03-13T13:24:12.576Z",
+      "viewMode": "full",
+      "frameCount": 1,
+      "name": "Nellie Ball",
+      "description": "An innovative, fast-paced offensive strategy developed by Hall of Fame coach Don Nelson. Considered the precursor to modern 'small ball' and 'pace and space,' Nellie Ball aggressively defies traditional basketball positions. It frequently utilizes a 'point forward' (a forward with point guard ball-handling skills) to initiate the offense, pulling the opponent's shot-blocker away from the rim. The system relies heavily on creating defensive mismatches, extreme run-and-gun transition offense, and a high volume of three-point shooting, often at the expense of traditional post-up play and interior defense."
+    },
+    "frames": [
+      {
+        "id": "1",
+        "entities": [],
+        "actions": []
+      }
+    ]
+  },
+  "updated_at": "2026-03-13T13:24:12.884631",
+  "created_at": "2026-03-13T13:24:12.884631"
+}

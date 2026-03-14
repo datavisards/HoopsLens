@@ -1,0 +1,35 @@
+{
+  "id": "0e6bf84f-13e4-4fe4-94b1-9828ee6214ad",
+  "preview_source": "custom",
+  "name": "Death Lineup ",
+  "category": "Strategy & Concepts",
+  "sub_category": "Lineup",
+  "description": "A highly specialized, hyper-efficient small-ball lineup popularized by the Golden State Warriors. It replaces a traditional center with a versatile, undersized forward (like Draymond Green) who can defend bigger players, rebound, and initiate the offense. The lineup features five players who can all shoot, pass, and dribble, creating unparalleled spacing (\"5-out\"). Defensively, their similar sizes and elite agility allow for an \"infinite switch\" scheme, neutralizing opponent pick-and-rolls and passing lanes.",
+  "tags": [],
+  "external_links": {
+    "article": "https://en.wikipedia.org/wiki/Death_Lineup",
+    "video": "https://www.youtube.com/watch?v=zBXh88F8POY"
+  },
+  "custom_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4-ZmnPnz7IWw6Y7MdlMqkKHYaAfrbCFLZ9g&s",
+  "playtypes": [],
+  "preview_image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR4-ZmnPnz7IWw6Y7MdlMqkKHYaAfrbCFLZ9g&s",
+  "animation_data": {
+    "meta": {
+      "version": "2.0",
+      "timestamp": "2026-03-13T13:06:50.153Z",
+      "viewMode": "full",
+      "frameCount": 1,
+      "name": "Death Lineup ",
+      "description": "A highly specialized, hyper-efficient small-ball lineup popularized by the Golden State Warriors. It replaces a traditional center with a versatile, undersized forward (like Draymond Green) who can defend bigger players, rebound, and initiate the offense. The lineup features five players who can all shoot, pass, and dribble, creating unparalleled spacing (\"5-out\"). Defensively, their similar sizes and elite agility allow for an \"infinite switch\" scheme, neutralizing opponent pick-and-rolls and passing lanes."
+    },
+    "frames": [
+      {
+        "id": "1",
+        "entities": [],
+        "actions": []
+      }
+    ]
+  },
+  "updated_at": "2026-03-13T13:06:50.468650",
+  "created_at": "2026-03-13T13:06:50.468650"
+}

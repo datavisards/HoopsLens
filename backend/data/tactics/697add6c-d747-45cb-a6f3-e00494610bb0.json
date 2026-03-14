@@ -1,0 +1,35 @@
+{
+  "id": "697add6c-d747-45cb-a6f3-e00494610bb0",
+  "preview_source": "custom",
+  "name": "Jordan Rules",
+  "category": "Strategy & Concepts",
+  "sub_category": "General Strategy",
+  "description": "A famous, highly aggressive defensive strategy implemented by the Detroit Pistons in the late 1980s specifically to stop Michael Jordan. The rules involved forcing him to his weaker side (left), instantly double- or triple-teaming him the moment he touched the ball, and applying extreme physical contact whenever he drove to the basket to wear him down physically and mentally. It highlights a fundamental principle: adapting a team's entire defensive geometry and physicality to neutralize a single transcendent offensive talent.",
+  "tags": [],
+  "external_links": {
+    "article": "https://en.wikipedia.org/wiki/Jordan_Rules",
+    "video": "https://www.youtube.com/watch?v=4GYKrcM1k0U"
+  },
+  "custom_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI0jSxHRezmsqQt1bY0n-rJSUKFriRhO5z2A&s",
+  "playtypes": [],
+  "preview_image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTI0jSxHRezmsqQt1bY0n-rJSUKFriRhO5z2A&s",
+  "animation_data": {
+    "meta": {
+      "version": "2.0",
+      "timestamp": "2026-03-13T13:14:17.468Z",
+      "viewMode": "full",
+      "frameCount": 1,
+      "name": "Jordan Rules",
+      "description": "A famous, highly aggressive defensive strategy implemented by the Detroit Pistons in the late 1980s specifically to stop Michael Jordan. The rules involved forcing him to his weaker side (left), instantly double- or triple-teaming him the moment he touched the ball, and applying extreme physical contact whenever he drove to the basket to wear him down physically and mentally. It highlights a fundamental principle: adapting a team's entire defensive geometry and physicality to neutralize a single transcendent offensive talent."
+    },
+    "frames": [
+      {
+        "id": "1",
+        "entities": [],
+        "actions": []
+      }
+    ]
+  },
+  "updated_at": "2026-03-13T13:14:17.479166",
+  "created_at": "2026-03-13T13:14:17.479166"
+}

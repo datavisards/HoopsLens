@@ -1,0 +1,35 @@
+{
+  "id": "b82789de-c993-4abe-96d8-04a0681e88a3",
+  "preview_source": "custom",
+  "name": "Hack-a-Shaq",
+  "category": "Strategy & Concepts",
+  "sub_category": "General Strategy",
+  "description": "A defensive strategy that involves intentionally committing personal fouls throughout the game against an opposing player who shoots free throws poorly (historically popularized against Shaquille O'Neal). The mathematical goal is to lower the opponent's points per possession (PPP) to around 1.0 or less, which is mathematically favorable compared to letting a high-powered offense run its normal plays. It also disrupts the opponent's offensive rhythm, stops the game clock, and prevents fast breaks, though it puts the fouling team in the penalty early.",
+  "tags": [],
+  "external_links": {
+    "article": "https://en.wikipedia.org/wiki/Hack-a-Shaq",
+    "video": "https://www.youtube.com/watch?v=Zq_aDORR880"
+  },
+  "custom_image_url": "https://i.ytimg.com/vi/Zq_aDORR880/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDzHFJICaaPmbBdf6qu1szaLM13LA",
+  "playtypes": [],
+  "preview_image": "https://i.ytimg.com/vi/Zq_aDORR880/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLDzHFJICaaPmbBdf6qu1szaLM13LA",
+  "animation_data": {
+    "meta": {
+      "version": "2.0",
+      "timestamp": "2026-03-13T13:11:39.136Z",
+      "viewMode": "full",
+      "frameCount": 1,
+      "name": "Hack-a-Shaq",
+      "description": "A defensive strategy that involves intentionally committing personal fouls throughout the game against an opposing player who shoots free throws poorly (historically popularized against Shaquille O'Neal). The mathematical goal is to lower the opponent's points per possession (PPP) to around 1.0 or less, which is mathematically favorable compared to letting a high-powered offense run its normal plays. It also disrupts the opponent's offensive rhythm, stops the game clock, and prevents fast breaks, though it puts the fouling team in the penalty early."
+    },
+    "frames": [
+      {
+        "id": "1",
+        "entities": [],
+        "actions": []
+      }
+    ]
+  },
+  "updated_at": "2026-03-13T13:11:39.146202",
+  "created_at": "2026-03-13T13:11:39.146202"
+}

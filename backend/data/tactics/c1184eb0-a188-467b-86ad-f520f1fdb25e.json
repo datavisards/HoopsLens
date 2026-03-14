@@ -1,0 +1,859 @@
+{
+  "id": "c1184eb0-a188-467b-86ad-f520f1fdb25e",
+  "preview_source": "custom",
+  "name": "Line Defense",
+  "category": "Defense",
+  "sub_category": "Man",
+  "description": "A man-to-man defensive strategy where defenders position themselves on an imaginary line between the ball handler and their assigned offensive player. It is highly aggressive and heavily focused on denying passes (deny defense), disrupting the offensive flow, and forcing the opponents to operate further away from the basket or commit turnovers.",
+  "tags": [],
+  "external_links": {
+    "article": "https://en.wikipedia.org/wiki/Line_defense",
+    "video": "https://www.youtube.com/watch?v=TxDO1e9gqAM"
+  },
+  "custom_image_url": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Xe_8p1nT_eHCBwPSTFFHTcQkEaOHQYScAw&s",
+  "playtypes": [],
+  "preview_image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Xe_8p1nT_eHCBwPSTFFHTcQkEaOHQYScAw&s",
+  "animation_data": {
+    "meta": {
+      "version": "2.0",
+      "timestamp": "2026-03-13T08:00:17.467Z",
+      "viewMode": "full",
+      "frameCount": 5,
+      "name": "Line Defense",
+      "description": "A man-to-man defensive strategy where defenders position themselves on an imaginary line between the ball handler and their assigned offensive player. It is highly aggressive and heavily focused on denying passes (deny defense), disrupting the offensive flow, and forcing the opponents to operate further away from the basket or commit turnovers."
+    },
+    "frames": [
+      {
+        "id": "1",
+        "entities": [
+          {
+            "id": "5860dc91-4fae-4bd6-aea8-1cd3593b1740",
+            "type": "player",
+            "team": "red",
+            "number": "1",
+            "position": {
+              "x": 350.55700988947063,
+              "y": 311.99863297714796
+            },
+            "rotation": 102.53475521188832
+          },
+          {
+            "id": "08687a87-299e-4e50-a187-242d40b20930",
+            "type": "player",
+            "team": "red",
+            "number": "2",
+            "position": {
+              "x": 256.5752375412061,
+              "y": 231.9749379143788
+            },
+            "rotation": 86.5300747870175
+          },
+          {
+            "id": "5b94cec9-4df1-450f-9c8b-d6dc7e3aa3d2",
+            "type": "player",
+            "team": "red",
+            "number": "3",
+            "position": {
+              "x": 257.57504363001743,
+              "y": 450.0395069604247
+            },
+            "rotation": 81.46511422752394
+          },
+          {
+            "id": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "type": "player",
+            "team": "red",
+            "number": "4",
+            "position": {
+              "x": 93.60684506496024,
+              "y": 229.97434553780957
+            },
+            "rotation": 102.88110234339229
+          },
+          {
+            "id": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "type": "player",
+            "team": "red",
+            "number": "5",
+            "position": {
+              "x": 98.60587550901687,
+              "y": 465.0439497846939
+            },
+            "rotation": 76.28657354122056
+          },
+          {
+            "id": "0ffd1b3c-f180-444b-9010-89b2343a3e55",
+            "type": "player",
+            "team": "white",
+            "number": "1",
+            "position": {
+              "x": 407.54595695171605,
+              "y": 315.9998177302864
+            },
+            "rotation": 263.65672565425143
+          },
+          {
+            "id": "96f23d4d-9ad9-429b-9fad-1a47baf4f6b5",
+            "type": "player",
+            "team": "white",
+            "number": "2",
+            "position": {
+              "x": 334.5601124684894,
+              "y": 521.0605363286322
+            },
+            "rotation": -32.18307481326633
+          },
+          {
+            "id": "f1ac1055-7870-4caf-bceb-feebcccc4495",
+            "type": "player",
+            "team": "white",
+            "number": "3",
+            "position": {
+              "x": 314.5639906922629,
+              "y": 97.93524868424048
+            },
+            "rotation": 256.497893346819
+          },
+          {
+            "id": "070c229b-aad2-412b-92ec-523ef6b99b0c",
+            "type": "player",
+            "team": "white",
+            "number": "4",
+            "position": {
+              "x": 131.59947643979058,
+              "y": 651.0990408056322
+            },
+            "rotation": 0
+          },
+          {
+            "id": "cf39f0be-38b3-4377-aa0f-f02e35df1edd",
+            "type": "player",
+            "team": "white",
+            "number": "5",
+            "position": {
+              "x": 127.60025208454525,
+              "y": 41.918662140302104
+            },
+            "rotation": 194.3746404057885
+          },
+          {
+            "id": "11a3d864-dc8e-4709-9545-587d8b6642fb",
+            "type": "ball",
+            "position": {
+              "x": 410.54537521815007,
+              "y": 300.99537490601716
+            },
+            "ownerId": "0ffd1b3c-f180-444b-9010-89b2343a3e55"
+          }
+        ],
+        "actions": [
+          {
+            "id": "57367681-13dc-476d-83fb-593dc968bafe",
+            "type": "pass",
+            "playerId": "0ffd1b3c-f180-444b-9010-89b2343a3e55",
+            "path": [
+              {
+                "x": 407.54595695171605,
+                "y": 315.9998177302864
+              },
+              {
+                "x": 379.83133216986613,
+                "y": 247.6695851085644
+              },
+              {
+                "x": 352.11670738801627,
+                "y": 179.33935248684242
+              },
+              {
+                "x": 323.56224549156485,
+                "y": 108.93850675537126
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Post_Up"
+          }
+        ]
+      },
+      {
+        "id": "af269493-1d32-45b4-a03b-edee28c4f56b",
+        "entities": [
+          {
+            "id": "5860dc91-4fae-4bd6-aea8-1cd3593b1740",
+            "type": "player",
+            "team": "red",
+            "number": "1",
+            "position": {
+              "x": 350.55700988947063,
+              "y": 311.99863297714796
+            },
+            "rotation": 102.53475521188832
+          },
+          {
+            "id": "08687a87-299e-4e50-a187-242d40b20930",
+            "type": "player",
+            "team": "red",
+            "number": "2",
+            "position": {
+              "x": 256.5752375412061,
+              "y": 231.9749379143788
+            },
+            "rotation": 86.5300747870175
+          },
+          {
+            "id": "5b94cec9-4df1-450f-9c8b-d6dc7e3aa3d2",
+            "type": "player",
+            "team": "red",
+            "number": "3",
+            "position": {
+              "x": 257.57504363001743,
+              "y": 450.0395069604247
+            },
+            "rotation": 81.46511422752394
+          },
+          {
+            "id": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "type": "player",
+            "team": "red",
+            "number": "4",
+            "position": {
+              "x": 93.60684506496024,
+              "y": 229.97434553780957
+            },
+            "rotation": 102.88110234339229
+          },
+          {
+            "id": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "type": "player",
+            "team": "red",
+            "number": "5",
+            "position": {
+              "x": 98.60587550901687,
+              "y": 465.0439497846939
+            },
+            "rotation": 76.28657354122056
+          },
+          {
+            "id": "0ffd1b3c-f180-444b-9010-89b2343a3e55",
+            "type": "player",
+            "team": "white",
+            "number": "1",
+            "position": {
+              "x": 407.54595695171605,
+              "y": 315.9998177302864
+            },
+            "rotation": 263.65672565425143
+          },
+          {
+            "id": "96f23d4d-9ad9-429b-9fad-1a47baf4f6b5",
+            "type": "player",
+            "team": "white",
+            "number": "2",
+            "position": {
+              "x": 334.5601124684894,
+              "y": 521.0605363286322
+            },
+            "rotation": -32.18307481326633
+          },
+          {
+            "id": "f1ac1055-7870-4caf-bceb-feebcccc4495",
+            "type": "player",
+            "team": "white",
+            "number": "3",
+            "position": {
+              "x": 314.5639906922629,
+              "y": 97.93524868424048
+            },
+            "rotation": 256.497893346819
+          },
+          {
+            "id": "070c229b-aad2-412b-92ec-523ef6b99b0c",
+            "type": "player",
+            "team": "white",
+            "number": "4",
+            "position": {
+              "x": 131.59947643979058,
+              "y": 651.0990408056322
+            },
+            "rotation": 0
+          },
+          {
+            "id": "cf39f0be-38b3-4377-aa0f-f02e35df1edd",
+            "type": "player",
+            "team": "white",
+            "number": "5",
+            "position": {
+              "x": 127.60025208454525,
+              "y": 41.918662140302104
+            },
+            "rotation": 194.3746404057885
+          },
+          {
+            "id": "11a3d864-dc8e-4709-9545-587d8b6642fb",
+            "type": "ball",
+            "position": {
+              "x": 323.56224549156485,
+              "y": 108.93850675537126
+            },
+            "ownerId": "f1ac1055-7870-4caf-bceb-feebcccc4495"
+          }
+        ],
+        "actions": [
+          {
+            "id": "f1468af5-d9af-401b-acda-9f447127d167",
+            "type": "move",
+            "playerId": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "path": [
+              {
+                "x": 93.60684506496024,
+                "y": 229.97434553780957
+              },
+              {
+                "x": 105.15460539073104,
+                "y": 176.82860905424803
+              },
+              {
+                "x": 116.70236571650183,
+                "y": 123.68287257068647
+              },
+              {
+                "x": 123.60102772929997,
+                "y": 87.93228680139437
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Spot_Up"
+          },
+          {
+            "id": "f281d065-e0e2-4492-9875-4d943014d97e",
+            "type": "move",
+            "playerId": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "path": [
+              {
+                "x": 98.60587550901687,
+                "y": 465.0439497846939
+              },
+              {
+                "x": 98.9358115183246,
+                "y": 416.51958169100726
+              },
+              {
+                "x": 99.26574752763233,
+                "y": 367.9952135973206
+              },
+              {
+                "x": 99.60568159782818,
+                "y": 318.0004101068556
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Cut"
+          },
+          {
+            "id": "53bd1bbf-fb4a-44ae-aac8-a827ed3a3277",
+            "type": "move",
+            "playerId": "08687a87-299e-4e50-a187-242d40b20930",
+            "path": [
+              {
+                "x": 256.5752375412061,
+                "y": 231.9749379143788
+              },
+              {
+                "x": 280.33063021136314,
+                "y": 202.26614112232576
+              },
+              {
+                "x": 284.0899011052937,
+                "y": 158.5531976942881
+              },
+              {
+                "x": 302.56631762652705,
+                "y": 121.94235720307127
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Spot_Up"
+          },
+          {
+            "id": "7a4c3245-0dcf-48c5-be83-13c559392968",
+            "type": "move",
+            "playerId": "5860dc91-4fae-4bd6-aea8-1cd3593b1740",
+            "path": [
+              {
+                "x": 350.55700988947063,
+                "y": 311.99863297714796
+              },
+              {
+                "x": 334.0602094240838,
+                "y": 297.8044300653893
+              },
+              {
+                "x": 317.56340895869687,
+                "y": 283.6102271536306
+              },
+              {
+                "x": 300.5667054489044,
+                "y": 268.98589688090954
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Spot_Up"
+          }
+        ]
+      },
+      {
+        "id": "286d30b0-3bf3-4510-b401-b02f116f5af8",
+        "entities": [
+          {
+            "id": "5860dc91-4fae-4bd6-aea8-1cd3593b1740",
+            "type": "player",
+            "team": "red",
+            "number": "1",
+            "position": {
+              "x": 300.5667054489044,
+              "y": 268.98589688090954
+            },
+            "rotation": -49.290587037438115
+          },
+          {
+            "id": "08687a87-299e-4e50-a187-242d40b20930",
+            "type": "player",
+            "team": "red",
+            "number": "2",
+            "position": {
+              "x": 302.56631762652705,
+              "y": 121.94235720307127
+            },
+            "rotation": 26.778737605635648
+          },
+          {
+            "id": "5b94cec9-4df1-450f-9c8b-d6dc7e3aa3d2",
+            "type": "player",
+            "team": "red",
+            "number": "3",
+            "position": {
+              "x": 257.57504363001743,
+              "y": 450.0395069604247
+            },
+            "rotation": 81.46511422752394
+          },
+          {
+            "id": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "type": "player",
+            "team": "red",
+            "number": "4",
+            "position": {
+              "x": 123.60102772929997,
+              "y": 87.93228680139437
+            },
+            "rotation": 10.921918075541512
+          },
+          {
+            "id": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "type": "player",
+            "team": "red",
+            "number": "5",
+            "position": {
+              "x": 99.60568159782818,
+              "y": 318.0004101068556
+            },
+            "rotation": 0.38957023601014384
+          },
+          {
+            "id": "0ffd1b3c-f180-444b-9010-89b2343a3e55",
+            "type": "player",
+            "team": "white",
+            "number": "1",
+            "position": {
+              "x": 407.54595695171605,
+              "y": 315.9998177302864
+            },
+            "rotation": 263.65672565425143
+          },
+          {
+            "id": "96f23d4d-9ad9-429b-9fad-1a47baf4f6b5",
+            "type": "player",
+            "team": "white",
+            "number": "2",
+            "position": {
+              "x": 334.5601124684894,
+              "y": 521.0605363286322
+            },
+            "rotation": -32.18307481326633
+          },
+          {
+            "id": "f1ac1055-7870-4caf-bceb-feebcccc4495",
+            "type": "player",
+            "team": "white",
+            "number": "3",
+            "position": {
+              "x": 315.5637967810742,
+              "y": 95.93465630767125
+            },
+            "rotation": 256.497893346819
+          },
+          {
+            "id": "070c229b-aad2-412b-92ec-523ef6b99b0c",
+            "type": "player",
+            "team": "white",
+            "number": "4",
+            "position": {
+              "x": 131.59947643979058,
+              "y": 651.0990408056322
+            },
+            "rotation": 0
+          },
+          {
+            "id": "cf39f0be-38b3-4377-aa0f-f02e35df1edd",
+            "type": "player",
+            "team": "white",
+            "number": "5",
+            "position": {
+              "x": 127.60025208454525,
+              "y": 41.918662140302104
+            },
+            "rotation": 194.3746404057885
+          },
+          {
+            "id": "11a3d864-dc8e-4709-9545-587d8b6642fb",
+            "type": "ball",
+            "position": {
+              "x": 316.56360286988553,
+              "y": 79.92991729511742
+            },
+            "ownerId": "f1ac1055-7870-4caf-bceb-feebcccc4495"
+          }
+        ],
+        "actions": [
+          {
+            "id": "7d68e1ed-3e28-4f7d-bcf0-8a74b51664e2",
+            "type": "pass",
+            "playerId": "f1ac1055-7870-4caf-bceb-feebcccc4495",
+            "path": [
+              {
+                "x": 315.5637967810742,
+                "y": 95.93465630767125
+              },
+              {
+                "x": 257.8249951522202,
+                "y": 79.0996714588412
+              },
+              {
+                "x": 200.08619352336626,
+                "y": 62.264686610011154
+              },
+              {
+                "x": 140.59773123909247,
+                "y": 44.919550705155956
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Post_Up"
+          }
+        ]
+      },
+      {
+        "id": "5e97b8b2-758f-452a-bcc3-4b63eb5ac8c6",
+        "entities": [
+          {
+            "id": "5860dc91-4fae-4bd6-aea8-1cd3593b1740",
+            "type": "player",
+            "team": "red",
+            "number": "1",
+            "position": {
+              "x": 300.5667054489044,
+              "y": 268.98589688090954
+            },
+            "rotation": -49.290587037438115
+          },
+          {
+            "id": "08687a87-299e-4e50-a187-242d40b20930",
+            "type": "player",
+            "team": "red",
+            "number": "2",
+            "position": {
+              "x": 302.56631762652705,
+              "y": 121.94235720307127
+            },
+            "rotation": 26.778737605635648
+          },
+          {
+            "id": "5b94cec9-4df1-450f-9c8b-d6dc7e3aa3d2",
+            "type": "player",
+            "team": "red",
+            "number": "3",
+            "position": {
+              "x": 257.57504363001743,
+              "y": 450.0395069604247
+            },
+            "rotation": 81.46511422752394
+          },
+          {
+            "id": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "type": "player",
+            "team": "red",
+            "number": "4",
+            "position": {
+              "x": 123.60102772929997,
+              "y": 87.93228680139437
+            },
+            "rotation": 10.921918075541512
+          },
+          {
+            "id": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "type": "player",
+            "team": "red",
+            "number": "5",
+            "position": {
+              "x": 99.60568159782818,
+              "y": 318.0004101068556
+            },
+            "rotation": 0.38957023601014384
+          },
+          {
+            "id": "0ffd1b3c-f180-444b-9010-89b2343a3e55",
+            "type": "player",
+            "team": "white",
+            "number": "1",
+            "position": {
+              "x": 407.54595695171605,
+              "y": 315.9998177302864
+            },
+            "rotation": 263.65672565425143
+          },
+          {
+            "id": "96f23d4d-9ad9-429b-9fad-1a47baf4f6b5",
+            "type": "player",
+            "team": "white",
+            "number": "2",
+            "position": {
+              "x": 334.5601124684894,
+              "y": 521.0605363286322
+            },
+            "rotation": -32.18307481326633
+          },
+          {
+            "id": "f1ac1055-7870-4caf-bceb-feebcccc4495",
+            "type": "player",
+            "team": "white",
+            "number": "3",
+            "position": {
+              "x": 315.5637967810742,
+              "y": 95.93465630767125
+            },
+            "rotation": 256.497893346819
+          },
+          {
+            "id": "070c229b-aad2-412b-92ec-523ef6b99b0c",
+            "type": "player",
+            "team": "white",
+            "number": "4",
+            "position": {
+              "x": 131.59947643979058,
+              "y": 651.0990408056322
+            },
+            "rotation": 0
+          },
+          {
+            "id": "cf39f0be-38b3-4377-aa0f-f02e35df1edd",
+            "type": "player",
+            "team": "white",
+            "number": "5",
+            "position": {
+              "x": 127.60025208454525,
+              "y": 41.918662140302104
+            },
+            "rotation": 194.3746404057885
+          },
+          {
+            "id": "11a3d864-dc8e-4709-9545-587d8b6642fb",
+            "type": "ball",
+            "position": {
+              "x": 140.59773123909247,
+              "y": 44.919550705155956
+            },
+            "ownerId": "cf39f0be-38b3-4377-aa0f-f02e35df1edd"
+          }
+        ],
+        "actions": [
+          {
+            "id": "5b422724-4f27-4448-ac86-bfff9b033faa",
+            "type": "move",
+            "playerId": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "path": [
+              {
+                "x": 123.60102772929997,
+                "y": 87.93228680139437
+              },
+              {
+                "x": 110.73352336629823,
+                "y": 82.32062518511768
+              },
+              {
+                "x": 97.86601900329649,
+                "y": 76.708963568841
+              },
+              {
+                "x": 95.60645724258289,
+                "y": 59.92399352942517
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Spot_Up"
+          },
+          {
+            "id": "3f54c25f-3f4a-4cba-971b-f32bf8fb4f9d",
+            "type": "move",
+            "playerId": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "path": [
+              {
+                "x": 99.60568159782818,
+                "y": 318.0004101068556
+              },
+              {
+                "x": 120.39165018421562,
+                "y": 238.11675651044632
+              },
+              {
+                "x": 141.17761877060303,
+                "y": 158.23310291403703
+              },
+              {
+                "x": 146.59656777196042,
+                "y": 71.92754778884053
+              }
+            ],
+            "color": "#ff4d4f",
+            "actionTag": "Spot_Up"
+          }
+        ]
+      },
+      {
+        "id": "d9f08c93-f2eb-46b9-81c7-49ebfa7a263f",
+        "entities": [
+          {
+            "id": "5860dc91-4fae-4bd6-aea8-1cd3593b1740",
+            "type": "player",
+            "team": "red",
+            "number": "1",
+            "position": {
+              "x": 300.5667054489044,
+              "y": 268.98589688090954
+            },
+            "rotation": -49.290587037438115
+          },
+          {
+            "id": "08687a87-299e-4e50-a187-242d40b20930",
+            "type": "player",
+            "team": "red",
+            "number": "2",
+            "position": {
+              "x": 302.56631762652705,
+              "y": 121.94235720307127
+            },
+            "rotation": 26.778737605635648
+          },
+          {
+            "id": "5b94cec9-4df1-450f-9c8b-d6dc7e3aa3d2",
+            "type": "player",
+            "team": "red",
+            "number": "3",
+            "position": {
+              "x": 257.57504363001743,
+              "y": 450.0395069604247
+            },
+            "rotation": 81.46511422752394
+          },
+          {
+            "id": "3609c25c-489a-4420-9bfc-855b95abe907",
+            "type": "player",
+            "team": "red",
+            "number": "4",
+            "position": {
+              "x": 95.60645724258289,
+              "y": 59.92399352942517
+            },
+            "rotation": -7.666960376681487
+          },
+          {
+            "id": "fd2f08af-6d69-4a18-aeb3-dec7a8c4078f",
+            "type": "player",
+            "team": "red",
+            "number": "5",
+            "position": {
+              "x": 146.59656777196042,
+              "y": 71.92754778884053
+            },
+            "rotation": 3.592768284154346
+          },
+          {
+            "id": "0ffd1b3c-f180-444b-9010-89b2343a3e55",
+            "type": "player",
+            "team": "white",
+            "number": "1",
+            "position": {
+              "x": 407.54595695171605,
+              "y": 315.9998177302864
+            },
+            "rotation": 263.65672565425143
+          },
+          {
+            "id": "96f23d4d-9ad9-429b-9fad-1a47baf4f6b5",
+            "type": "player",
+            "team": "white",
+            "number": "2",
+            "position": {
+              "x": 334.5601124684894,
+              "y": 521.0605363286322
+            },
+            "rotation": -32.18307481326633
+          },
+          {
+            "id": "f1ac1055-7870-4caf-bceb-feebcccc4495",
+            "type": "player",
+            "team": "white",
+            "number": "3",
+            "position": {
+              "x": 315.5637967810742,
+              "y": 95.93465630767125
+            },
+            "rotation": 256.497893346819
+          },
+          {
+            "id": "070c229b-aad2-412b-92ec-523ef6b99b0c",
+            "type": "player",
+            "team": "white",
+            "number": "4",
+            "position": {
+              "x": 131.59947643979058,
+              "y": 651.0990408056322
+            },
+            "rotation": 0
+          },
+          {
+            "id": "cf39f0be-38b3-4377-aa0f-f02e35df1edd",
+            "type": "player",
+            "team": "white",
+            "number": "5",
+            "position": {
+              "x": 127.60025208454525,
+              "y": 41.918662140302104
+            },
+            "rotation": 194.3746404057885
+          },
+          {
+            "id": "11a3d864-dc8e-4709-9545-587d8b6642fb",
+            "type": "ball",
+            "position": {
+              "x": 127.60025208454525,
+              "y": 41.918662140302104
+            },
+            "ownerId": "cf39f0be-38b3-4377-aa0f-f02e35df1edd"
+          }
+        ],
+        "actions": []
+      }
+    ]
+  },
+  "updated_at": "2026-03-13T08:00:17.769219",
+  "created_at": "2026-03-13T08:00:17.769219"
+}

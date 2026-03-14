@@ -1,0 +1,35 @@
+{
+  "id": "8fd713b5-4aec-4fbb-b612-2d4d5197501a",
+  "preview_source": "custom",
+  "name": "Player tracking (NBA)",
+  "category": "Strategy & Concepts",
+  "sub_category": "Concept",
+  "description": "An advanced optical and radar tracking technology used in the NBA to capture the real-time X, Y, and Z coordinates of every player and the ball multiple times per second (e.g., 25 frames per second). Originally powered by SportVU and later Second Spectrum, this system generates massive spatial datasets. While not a playbook tactic itself, player tracking is the foundational data infrastructure that makes modern analytical coaching, spatial evaluation, and advanced systems (like interactive tactical boards) possible. It measures everything from player speed and distance traveled to defensive spacing and shot probabilities.",
+  "tags": [],
+  "external_links": {
+    "article": "https://en.wikipedia.org/wiki/Player_tracking_(NBA)",
+    "video": "https://www.youtube.com/watch?v=fXiHSeEdY78"
+  },
+  "custom_image_url": "https://preview.redd.it/nba-players-tracking-and-recognition-v0-f6czfcht8osf1.gif?format=png8&s=064b136d5df2ece454c7fb2931f841b58848dd88",
+  "playtypes": [],
+  "preview_image": "https://preview.redd.it/nba-players-tracking-and-recognition-v0-f6czfcht8osf1.gif?format=png8&s=064b136d5df2ece454c7fb2931f841b58848dd88",
+  "animation_data": {
+    "meta": {
+      "version": "2.0",
+      "timestamp": "2026-03-13T13:27:11.577Z",
+      "viewMode": "full",
+      "frameCount": 1,
+      "name": "Player tracking (NBA)",
+      "description": "An advanced optical and radar tracking technology used in the NBA to capture the real-time X, Y, and Z coordinates of every player and the ball multiple times per second (e.g., 25 frames per second). Originally powered by SportVU and later Second Spectrum, this system generates massive spatial datasets. While not a playbook tactic itself, player tracking is the foundational data infrastructure that makes modern analytical coaching, spatial evaluation, and advanced systems (like interactive tactical boards) possible. It measures everything from player speed and distance traveled to defensive spacing and shot probabilities."
+    },
+    "frames": [
+      {
+        "id": "1",
+        "entities": [],
+        "actions": []
+      }
+    ]
+  },
+  "updated_at": "2026-03-13T13:27:11.893780",
+  "created_at": "2026-03-13T13:27:11.893780"
+}
