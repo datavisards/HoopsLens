@@ -1,5 +1,9 @@
 # Vercel 部署配置说明
 
+## DigitalOcean 部署
+
+如果你要部署到 DigitalOcean（Droplet + Nginx + systemd + HTTPS），请优先参考项目根目录下的 `DIGITALOCEAN_DEPLOYMENT.md`。
+
 ## 环境变量设置
 
 在 Vercel 项目设置中，需要添加以下环境变量：
