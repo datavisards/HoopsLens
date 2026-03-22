@@ -611,7 +611,7 @@ const TacticsBoard: React.FC = () => {
   const lastChartUpdateRef = useRef(0);
 
   // ─── Roster-Fit live error computation ──────────────────────────────────────
-  // 暂时注释掉基于连线的动作匹配警告
+  // Temporarily disabled: action-line-based warning computation
   const fitErrors: FitError[] = React.useMemo(() => [], [actionsMap, entitiesMap, viewMode, currentFrameIndex]);
   // const fitErrors: FitError[] = React.useMemo(
   //   () => computeRosterFit(actionsMap[viewMode], entitiesMap[viewMode], currentFrameIndex),
@@ -2372,7 +2372,7 @@ const TacticsBoard: React.FC = () => {
                     {/* --- Z-Index Fix: Render Layers in Order --- */}
 
                     {/* 1. Render Players First (Bottom Layer) */}
-{/* 1. 先渲染所有球?(底层) */}
+                    {/* 1. Render all players (bottom layer) */}
                   {entities.filter(e => e.type === 'player').map(entity => {
                       const hasBall = entities.some(e => e.type === 'ball' && (e as BallType).ownerId === entity.id);
                       return (
@@ -2400,7 +2400,7 @@ const TacticsBoard: React.FC = () => {
                       );
                   })}
 
-                  {/* 2. 后渲染所有球 (顶层 - 确保球永远浮在球员上? */}
+                  {/* 2. Render all balls last (top layer - ensures ball always floats above players) */}
                   {entities.filter(e => e.type === 'ball').map(entity => (
                       <Ball 
                         key={entity.id} 

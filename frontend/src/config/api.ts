@@ -7,7 +7,10 @@ export const API_ENDPOINTS = {
   GET_PLAYER_STATS: (playerId: string) => `${API_BASE_URL}/api/players/${playerId}/stats`,
 
   // Tactics Gallery
-  TACTICS: `${API_BASE_URL}/api/tactics`
+  TACTICS: `${API_BASE_URL}/api/tactics`,
+
+  // AI Tactics Search
+  AI_TACTICS_SEARCH: `${API_BASE_URL}/api/tactics/ai-search`
 };
 
 export default API_BASE_URL;

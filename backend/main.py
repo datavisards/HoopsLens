@@ -6,7 +6,7 @@ import uvicorn
 
 load_dotenv()
 
-from routers import players, tactics, ai_diagnostics
+from routers import players, tactics, ai_diagnostics, ai_tactics
 
 app = FastAPI()
 
@@ -23,6 +23,7 @@ app.include_router(players.router)
 app.include_router(players.shotchart_router)
 app.include_router(tactics.router)
 app.include_router(ai_diagnostics.router)
+app.include_router(ai_tactics.router)
 
 @app.get('/')
 async def root():

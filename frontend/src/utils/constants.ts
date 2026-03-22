@@ -9,8 +9,8 @@ export const RIM_Y = COURT_HEIGHT / 2;
 // Colors
 export const APP_BACKGROUND = '#1F1F1F'; // Dark Grey Sports Style
 export const COURT_COLOR = '#C68E56'; // Deep Orange-Brown Wood
-export const LINE_COLOR = '#ffffff';  // 线条颜色
-export const BORDER_COLOR = '#333333'; // 边框颜色
+export const LINE_COLOR = '#ffffff';  // Line color
+export const BORDER_COLOR = '#333333'; // Border color
 export const ACCENT_COLOR = '#3A7AFE'; // Unified Accent Color (Sports Blue)
 
 export const TEAM_COLORS: Record<string, string> = {

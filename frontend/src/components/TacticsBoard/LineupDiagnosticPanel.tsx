@@ -647,10 +647,8 @@ const LineupDiagnosticPanel: React.FC<LineupDiagnosticPanelProps> = ({ isOpen, o
           width: '640px',
           maxWidth: '58vw',
           minWidth: '540px',
-          background: 'rgba(10,16,28,0.72)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.12)',
+          background: '#1F1F1F', // Left toolbar background / App Background
+          border: '1px solid #3F3F46',
           borderRadius: 14,
           boxShadow: '-10px 0 32px rgba(0,0,0,0.5)',
           zIndex: 1000,
@@ -682,10 +680,10 @@ const LineupDiagnosticPanel: React.FC<LineupDiagnosticPanelProps> = ({ isOpen, o
             {/* Custom AI-Themed Segmented Control */}
             <div style={{
               display: 'inline-flex',
-              background: 'rgba(15,23,42,0.6)',
+              background: '#27272A',
               borderRadius: 12,
               padding: 4,
-              border: '1px solid rgba(255,255,255,0.06)',
+              border: '1px solid #3F3F46',
             }}>
               {[
                 { id: 'optimize_lineup', label: 'Optimize Lineup' },
@@ -698,15 +696,15 @@ const LineupDiagnosticPanel: React.FC<LineupDiagnosticPanelProps> = ({ isOpen, o
                     onClick={() => setPanelMode(opt.id as any)}
                     style={{
                       border: 'none',
-                      background: isActive ? 'linear-gradient(135deg, rgba(250,173,20,0.2) 0%, rgba(250,173,20,0.05) 100%)' : 'transparent',
-                      color: isActive ? '#faad14' : '#8f9bb3',
+                      background: isActive ? '#3F3F46' : 'transparent',
+                      color: isActive ? '#F59E0B' : '#A1A1AA',
                       fontWeight: isActive ? 700 : 500,
                       padding: '8px 20px',
                       borderRadius: 8,
                       fontSize: 14,
                       cursor: 'pointer',
                       transition: 'all 0.2s ease',
-                      boxShadow: isActive ? 'inset 0 0 0 1px rgba(250,173,20,0.3), 0 2px 8px rgba(0,0,0,0.2)' : 'none',
+                      boxShadow: isActive ? '0 2px 8px rgba(0,0,0,0.2)' : 'none',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 6
@@ -722,15 +720,21 @@ const LineupDiagnosticPanel: React.FC<LineupDiagnosticPanelProps> = ({ isOpen, o
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '14px 20px 18px' }}>
           <Button 
+            className="run-diagnostics-btn"
             type={result ? "default" : "primary"} 
             block 
             loading={loading} 
             icon={<RadarChartOutlined />} 
             onClick={() => form.submit()} 
-            style={result ? { height: 46, borderRadius: 10, fontWeight: 600, marginBottom: 14, background: 'transparent', borderColor: '#4e5a70', color: '#8f9bb3' } : { height: 46, borderRadius: 10, fontWeight: 700, marginBottom: 14, background: '#faad14', borderColor: '#faad14', color: '#000' }}
+            style={result ? { height: 46, borderRadius: 10, fontWeight: 600, marginBottom: 14, background: 'transparent', borderColor: '#3F3F46', color: '#A1A1AA' } : { height: 46, borderRadius: 10, fontWeight: 700, marginBottom: 14, background: '#F59E0B', borderColor: '#F59E0B', color: '#18181B' }}
           >
             {loading ? 'Analyzing...' : result ? 'Recalculate Diagnostics' : 'Run Lineup Diagnostics'}
           </Button>
+          <style>{`
+            .run-diagnostics-btn:hover {
+                filter: brightness(1.1);
+            }
+          `}</style>
 
           {diagError && (
             <div style={{
