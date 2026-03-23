@@ -804,42 +804,41 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
           <Card
             bordered={false}
             style={{
-              boxShadow: '0 2px 12px rgba(114, 46, 209, 0.08)',
-              border: '1px solid #f0e6ff',
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.2)',
+              border: '1px solid #3F3F46',
               borderRadius: 12,
-              marginBottom: 16
+              marginBottom: 16,
+              background: '#18181B'
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
-              <RobotOutlined style={{ fontSize: 20, color: '#722ed1' }} />
-              <Typography.Text strong style={{ fontSize: 15 }}>AI Tactic Finder</Typography.Text>
+              <Typography.Text strong style={{ fontSize: 15 }}>Tactic Finder</Typography.Text>
               <Typography.Text type="secondary" style={{ fontSize: 12 }}>Describe what you need in natural language</Typography.Text>
             </div>
             <Input
               value={aiQuery}
               onChange={e => setAiQuery(e.target.value)}
               placeholder={'Describe what you need, e.g. "pick and roll for quick guards"'}
-              style={{ borderRadius: 20, fontSize: 14, height: 40 }}
-              prefix={<SearchOutlined style={{ color: '#bfbfbf', marginRight: 4 }} />}
+              style={{ borderRadius: 24, fontSize: 16, height: 48 }}
+              prefix={<SearchOutlined style={{ color: '#bfbfbf', marginRight: 8, fontSize: 18 }} />}
               suffix={
                 <Button
                   type="text"
-                  icon={<SendOutlined />}
+                  icon={<SendOutlined style={{ fontSize: 18 }} />}
                   onClick={() => handleAISearch()}
                   loading={aiLoading}
-                  style={{ color: '#722ed1' }}
+                  style={{ color: '#F59E0B' }}
                 />
               }
               onPressEnter={() => handleAISearch()}
               disabled={aiLoading}
               allowClear
             />
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 10 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
                 {EXAMPLE_PROMPTS.slice(0, 4).map(prompt => (
                   <Tag
                     key={prompt}
-                    style={{ cursor: 'pointer', borderRadius: 12, fontSize: 11 }}
-                    color="purple"
+                    style={{ cursor: 'pointer', borderRadius: 14, fontSize: 13, padding: '4px 12px', background: '#27272A', color: '#F4F4F5', border: '1px solid #3F3F46' }}
                     onClick={() => { setAiQuery(prompt); handleAISearch(prompt); }}
                   >
                     {prompt}
@@ -854,7 +853,7 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
             <div style={{ textAlign: 'center', padding: '60px 0' }}>
               <Spin size="large" />
               <div style={{
-                marginTop: 16, fontSize: 14, color: '#722ed1',
+                marginTop: 16, fontSize: 15, color: '#F59E0B',
                 fontWeight: 500, transition: 'all 0.3s'
               }}>
                 {aiLoadingMsg}
@@ -890,12 +889,10 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
             </div>
           )}
 
-          {/* Initial State */}
+          {/* Initial State (Removed to reduce AI vibe) */}
           {!aiLoading && aiResults.length === 0 && !aiMessage && (
-            <div style={{ textAlign: 'center', padding: '60px 0', color: '#bfbfbf' }}>
-              <RobotOutlined style={{ fontSize: 48, marginBottom: 16, color: '#d9d9d9' }} />
-              <div style={{ fontSize: 14 }}>Describe what you're looking for and let AI find the best tactics for you</div>
-              <div style={{ fontSize: 12, marginTop: 8 }}>Supports English and Chinese 🌏</div>
+            <div style={{ height: '60px' }}>
+              {/* Intentional empty space */}
             </div>
           )}
         </div>

@@ -10,7 +10,7 @@ import DanmakuLayer from './DanmakuLayer';
 import PlayerInfoPanel from './PlayerInfoPanel';
 import { BoardEntity, ViewMode, Player as PlayerType, Ball as BallType, TeamType, Action, ActionType, Position, OffensiveRoleCode } from '../../types';
 import { COURT_WIDTH, COURT_HEIGHT, APP_BACKGROUND, POSITIONS } from '../../utils/constants';
-import { Button, Tooltip, Menu, Dropdown, Slider, message, Modal, List, Card, Tag, Spin, Input, Avatar, Form, Select, Row, Col, Upload, Space, Radio } from 'antd';
+import { Button, Tooltip, Menu, Dropdown, Slider, message, Modal, List, Card, Tag, Spin, Input, Avatar, Form, Select, Row, Col, Upload, Space, Radio, ConfigProvider, theme } from 'antd';
 // import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { 
   ExpandOutlined, 
@@ -2636,173 +2636,209 @@ const TacticsBoard: React.FC = () => {
         onSelectTactic={handleLoadTactic}
       />
       
-      <Modal
-        title={currentTacticId ? "Update Tactic" : "Save Tactic to Gallery"}
-        visible={isSaveModalVisible}
-        onCancel={() => setIsSaveModalVisible(false)}
-        onOk={() => saveForm.submit()}
-        confirmLoading={saveLoading}
-        width={600}
+      <ConfigProvider
+        theme={{
+          algorithm: theme.darkAlgorithm,
+          token: {
+            colorPrimary: '#F59E0B',
+            colorInfo: '#3B82F6',
+            colorBgBase: '#18181B',
+            colorBgContainer: '#18181B',
+            colorBgElevated: '#27272A',
+            colorTextBase: '#F4F4F5',
+            colorTextSecondary: '#A1A1AA',
+            colorBorder: '#3F3F46',
+            colorBorderSecondary: '#3F3F46',
+            borderRadius: 6,
+            fontFamily: 'Inter, Roboto, sans-serif'
+          },
+          components: {
+            Modal: {
+              contentBg: '#27272A',
+              headerBg: '#27272A',
+              titleColor: '#F4F4F5'
+            }
+          }
+        }}
       >
-        <Form
-            form={saveForm}
-            layout="vertical"
-            onFinish={handleSaveTactic}
-            initialValues={{ category: 'Offense', tags: [], sub_category: 'Actions', preview_source: 'auto' }}
+        <Modal
+          title={currentTacticId ? "Update Tactic" : "Save Tactic to Gallery"}
+          open={isSaveModalVisible}
+          onCancel={() => setIsSaveModalVisible(false)}
+          confirmLoading={saveLoading}
+          width={600}
+          styles={{
+            mask: { backdropFilter: 'blur(8px)', backgroundColor: 'rgba(0,0,0,0.6)' },
+            header: { borderBottom: '1px solid #3F3F46', paddingBottom: '16px', marginBottom: '20px' }
+          }}
+          closeIcon={<div style={{ color: '#A1A1AA', fontSize: '16px' }}>×</div>}
+          footer={[
+            <Button key="cancel" onClick={() => setIsSaveModalVisible(false)} style={{ background: 'transparent', borderColor: '#3F3F46', color: '#F4F4F5' }}>
+              Cancel
+            </Button>,
+            <Button key="submit" type="primary" loading={saveLoading} onClick={() => saveForm.submit()} style={{ fontWeight: 600, color: '#18181B' }}>
+              {currentTacticId ? "Update" : "Save"}
+            </Button>,
+          ]}
         >
-            {/* Dynamic Preview Section */}
-            <Form.Item noStyle shouldUpdate={(prev, curr) => prev.preview_source !== curr.preview_source || prev.custom_image_url !== curr.custom_image_url}>
-                {({ getFieldValue }) => {
-                    const source = getFieldValue('preview_source');
-                    const customUrl = getFieldValue('custom_image_url');
-                    const displayImage = (source === 'custom' || source === 'upload') && customUrl ? customUrl : savePreviewImage;
+          <Form
+              form={saveForm}
+              layout="vertical"
+              onFinish={handleSaveTactic}
+              initialValues={{ category: 'Offense', tags: [], sub_category: 'Actions', preview_source: 'auto' }}
+          >
+              <Form.Item noStyle shouldUpdate={(prev, curr) => prev.preview_source !== curr.preview_source || prev.custom_image_url !== curr.custom_image_url}>
+                  {({ getFieldValue }) => {
+                      const source = getFieldValue('preview_source');
+                      const customUrl = getFieldValue('custom_image_url');
+                      const displayImage = (source === 'custom' || source === 'upload') && customUrl ? customUrl : savePreviewImage;
 
-                    return (
-                        <div style={{ marginBottom: 16, textAlign: 'center', background: '#f0f0f0', padding: 8 }}>
-                            {displayImage ? (
-                                <img 
-                                    src={displayImage} 
-                                    alt="Preview" 
-                                    style={{ maxWidth: '100%', maxHeight: 200, objectFit: 'contain' }} 
-                                    onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL')}
-                                />
-                            ) : (
-                                <div style={{ height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}>
-                                    No Preview Available
-                                </div>
-                            )}
-                            <div style={{ fontSize: 12, color: '#999', marginTop: 4 }}>
-                                {source === 'auto' ? 'Auto-generated Preview' : 'Custom Preview'}
-                            </div>
-                        </div>
-                    );
-                }}
-            </Form.Item>
+                      return (
+                          <div style={{ marginBottom: 16, textAlign: 'center', background: '#18181B', border: '1px solid #3F3F46', borderRadius: '8px', padding: 8 }}>
+                              {displayImage ? (
+                                  <img 
+                                      src={displayImage} 
+                                      alt="Preview" 
+                                      style={{ maxWidth: '100%', maxHeight: 200, objectFit: 'contain' }} 
+                                      onError={(e) => (e.currentTarget.src = 'https://via.placeholder.com/400x200?text=Invalid+Image+URL')}
+                                  />
+                              ) : (
+                                  <div style={{ height: 150, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#A1A1AA' }}>
+                                      No Preview Available
+                                  </div>
+                              )}
+                              <div style={{ fontSize: 12, color: '#A1A1AA', marginTop: 4 }}>
+                                  {source === 'auto' ? 'Auto-generated Preview' : 'Custom Preview'}
+                              </div>
+                          </div>
+                      );
+                  }}
+              </Form.Item>
 
-            <Form.Item name="preview_source" label="Preview Image Source">
-                <Radio.Group buttonStyle="solid">
-                    <Radio.Button value="auto">Auto-Generated</Radio.Button>
-                    <Radio.Button value="custom">URL</Radio.Button>
-                    <Radio.Button value="upload">Upload</Radio.Button>
-                </Radio.Group>
-            </Form.Item>
+              <Form.Item name="preview_source" label="Preview Image Source">
+                  <Radio.Group buttonStyle="solid">
+                      <Radio.Button value="auto">Auto-Generated</Radio.Button>
+                      <Radio.Button value="custom">URL</Radio.Button>
+                      <Radio.Button value="upload">Upload</Radio.Button>
+                  </Radio.Group>
+              </Form.Item>
 
-            <Form.Item 
-                noStyle 
-                shouldUpdate={(prev, curr) => prev.preview_source !== curr.preview_source || prev.custom_image_url !== curr.custom_image_url}
-            >
-                {({ getFieldValue, setFieldsValue }) => {
-                    const source = getFieldValue('preview_source');
+              <Form.Item 
+                  noStyle 
+                  shouldUpdate={(prev, curr) => prev.preview_source !== curr.preview_source || prev.custom_image_url !== curr.custom_image_url}
+              >
+                  {({ getFieldValue, setFieldsValue }) => {
+                      const source = getFieldValue('preview_source');
 
-                    if (source === 'custom') {
-                        return (
-                            <Form.Item name="custom_image_url" label="Image URL" rules={[{ required: true, message: 'Please enter image URL' }]}>
-                                <Input placeholder="https://example.com/my-tactic.jpg" />
-                            </Form.Item>
-                        );
-                    }
-                    
-                    if (source === 'upload') {
-                        return (
-                            <Form.Item label="Upload Image">
-                                <Upload
-                                    beforeUpload={(file) => {
-                                        const reader = new FileReader();
-                                        reader.onload = e => {
-                                            if (e.target && e.target.result) {
-                                                setFieldsValue({ custom_image_url: e.target.result });
-                                            }
-                                        };
-                                        reader.readAsDataURL(file);
-                                        return false; // Prevent auto upload
-                                    }}
-                                    showUploadList={false}
-                                >
-                                    <Button>Click to Upload Image</Button>
-                                </Upload>
-                                <Form.Item name="custom_image_url" noStyle>
-                                    <Input type="hidden" />
-                                </Form.Item>
-                                {getFieldValue('custom_image_url') && <div style={{marginTop: 8, color: 'green'}}>Image Loaded Successfully</div>}
-                            </Form.Item>
-                        );
-                    }
-                    
-                    return null;
-                }}
-            </Form.Item>
+                      if (source === 'custom') {
+                          return (
+                              <Form.Item name="custom_image_url" label="Image URL" rules={[{ required: true, message: 'Please enter image URL' }]}>
+                                  <Input placeholder="https://example.com/my-tactic.jpg" />
+                              </Form.Item>
+                          );
+                      }
+                      
+                      if (source === 'upload') {
+                          return (
+                              <Form.Item label="Upload Image">
+                                  <Upload
+                                      beforeUpload={(file) => {
+                                          const reader = new FileReader();
+                                          reader.onload = e => {
+                                              if (e.target && e.target.result) {
+                                                  setFieldsValue({ custom_image_url: e.target.result });
+                                              }
+                                          };
+                                          reader.readAsDataURL(file);
+                                          return false; // Prevent auto upload
+                                      }}
+                                      showUploadList={false}
+                                  >
+                                      <Button>Click to Upload Image</Button>
+                                  </Upload>
+                                  <Form.Item name="custom_image_url" noStyle>
+                                      <Input type="hidden" />
+                                  </Form.Item>
+                                  {getFieldValue('custom_image_url') && <div style={{marginTop: 8, color: '#F59E0B'}}>Image Loaded Successfully</div>}
+                              </Form.Item>
+                          );
+                      }
+                      
+                      return null;
+                  }}
+              </Form.Item>
 
-            <Form.Item name="name" label="Tactic Name" rules={[{ required: true }]}>
-                <Input placeholder="e.g. Horns Flex Offense" />
-            </Form.Item>
+              <Form.Item name="name" label="Tactic Name" rules={[{ required: true }]}>
+                  <Input placeholder="e.g. Horns Flex Offense" />
+              </Form.Item>
 
-            <Row gutter={16}>
-                <Col span={12}>
-                    <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-                        <Select onChange={() => saveForm.setFieldsValue({ sub_category: null })}>
-                            <Select.Option value="Offense">Offense</Select.Option>
-                            <Select.Option value="Defense">Defense</Select.Option>
-                            <Select.Option value="Strategy & Concepts">Strategy & Concepts</Select.Option>
-                        </Select>
-                    </Form.Item>
-                </Col>
-                <Col span={12}>
-                    <Form.Item 
-                        noStyle 
-                        shouldUpdate={(prev, curr) => prev.category !== curr.category}
-                    >
-                        {({ getFieldValue }) => {
-                            const category = getFieldValue('category');
-                            let currentSubCategories: string[] = [];
-                            if (category === 'Offense') {
-                                currentSubCategories = ['Set', 'Motion', 'Actions', 'Continuity', 'Zone'];
-                            } else if (category === 'Defense') {
-                                currentSubCategories = ['Man', 'Zone', 'Press'];
-                            } else {
-                                currentSubCategories = ['General Strategy', 'Concept', 'Lineup'];
-                            }
-                            
-                            return (
-                                <Form.Item name="sub_category" label="Sub-Category" rules={[{ required: true }]}>
-                                    <Select placeholder="Type">
-                                        {currentSubCategories.map(sub => (
-                                            <Select.Option key={sub} value={sub}>{sub}</Select.Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-                            );
-                        }}
-                    </Form.Item>
-                </Col>
-            </Row>
+              <Row gutter={16}>
+                  <Col span={12}>
+                      <Form.Item name="category" label="Category" rules={[{ required: true }]}>
+                          <Select onChange={() => saveForm.setFieldsValue({ sub_category: null })}>
+                              <Select.Option value="Offense">Offense</Select.Option>
+                              <Select.Option value="Defense">Defense</Select.Option>
+                              <Select.Option value="Strategy & Concepts">Strategy & Concepts</Select.Option>
+                          </Select>
+                      </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                      <Form.Item 
+                          noStyle 
+                          shouldUpdate={(prev, curr) => prev.category !== curr.category}
+                      >
+                          {({ getFieldValue }) => {
+                              const category = getFieldValue('category');
+                              let currentSubCategories: string[] = [];
+                              if (category === 'Offense') {
+                                  currentSubCategories = ['Set', 'Motion', 'Actions', 'Continuity', 'Zone'];
+                              } else if (category === 'Defense') {
+                                  currentSubCategories = ['Man', 'Zone', 'Press'];
+                              } else {
+                                  currentSubCategories = ['General Strategy', 'Concept', 'Lineup'];
+                              }
+                              
+                              return (
+                                  <Form.Item name="sub_category" label="Sub-Category" rules={[{ required: true }]}>
+                                      <Select placeholder="Type">
+                                          {currentSubCategories.map(sub => (
+                                              <Select.Option key={sub} value={sub}>{sub}</Select.Option>
+                                          ))}
+                                      </Select>
+                                  </Form.Item>
+                              );
+                          }}
+                      </Form.Item>
+                  </Col>
+              </Row>
 
-            
-            <Form.Item name="description" label="Description">
-                <Input.TextArea rows={3} placeholder="Briefly describe the tactic..." />
-            </Form.Item>
+              <Form.Item name="description" label="Description">
+                  <Input.TextArea rows={3} placeholder="Briefly describe the tactic..." />
+              </Form.Item>
 
-            <Form.Item name="tags" label="Tags">
-              <Select
-                mode="multiple"
-                options={atomicActionTagOptions}
-                placeholder="Select atomic actions (e.g. PnR_BH, Spot_Up, Cut)"
-                optionFilterProp="label"
-                showSearch
-              />
-            </Form.Item>
+              <Form.Item name="tags" label="Tags">
+                <Select
+                  mode="multiple"
+                  options={atomicActionTagOptions}
+                  placeholder="Select atomic actions (e.g. PnR_BH, Spot_Up, Cut)"
+                  optionFilterProp="label"
+                  showSearch
+                />
+              </Form.Item>
 
-            <Form.Item label="External Links">
-                <Input.Group compact>
-                    <Form.Item name={['external_links', 'article']} noStyle>
-                        <Input style={{ width: '50%' }} prefix={<LinkOutlined />} placeholder="Article / Wikipedia URL" />
-                    </Form.Item>
-                    <Form.Item name={['external_links', 'video']} noStyle>
-                        <Input style={{ width: '50%' }} prefix={<PlayCircleOutlined />} placeholder="Video URL" />
-                    </Form.Item>
-                </Input.Group>
-            </Form.Item>
-        </Form>
-      </Modal>
+              <Form.Item label="External Links">
+                  <Input.Group compact>
+                      <Form.Item name={['external_links', 'article']} noStyle>
+                          <Input style={{ width: '50%' }} prefix={<LinkOutlined />} placeholder="Article / Wikipedia URL" />
+                      </Form.Item>
+                      <Form.Item name={['external_links', 'video']} noStyle>
+                          <Input style={{ width: '50%' }} prefix={<PlayCircleOutlined />} placeholder="Video URL" />
+                      </Form.Item>
+                  </Input.Group>
+              </Form.Item>
+          </Form>
+        </Modal>
+      </ConfigProvider>
 
       {/* AI Lineup Diagnostic Panel */}
       <LineupDiagnosticPanel
