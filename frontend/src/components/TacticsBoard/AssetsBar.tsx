@@ -44,7 +44,7 @@ const AssetsBar: React.FC<AssetsBarProps> = ({ onDragStart, vertical = false }) 
       
       {/* Color Picker Section */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-        <Text style={{ color: '#ccc', fontSize: '12px', fontWeight: 'bold' }}>COLORS</Text>
+        <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 800 }}>COLORS</Text>
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(2, 1fr)', 
@@ -79,7 +79,7 @@ const AssetsBar: React.FC<AssetsBarProps> = ({ onDragStart, vertical = false }) 
 
       {/* Player Pieces Section */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-        <Text style={{ color: '#ccc', fontSize: '12px', fontWeight: 'bold', whiteSpace: 'nowrap' }}>PLAYERS</Text>
+        <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 800, whiteSpace: 'nowrap' }}>PLAYERS</Text>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', flexWrap: 'nowrap' }}>
           {playerNumbers.map((num) => (
             <div
@@ -94,8 +94,8 @@ const AssetsBar: React.FC<AssetsBarProps> = ({ onDragStart, vertical = false }) 
               onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
             >
               <div style={{
-                width: '36px',
-                height: '36px',
+                width: '40px',
+                height: '40px',
                 borderRadius: '50%',
                 background: TEAM_COLORS[selectedTeam],
                 border: '2px solid white',
@@ -103,8 +103,8 @@ const AssetsBar: React.FC<AssetsBarProps> = ({ onDragStart, vertical = false }) 
                 justifyContent: 'center',
                 alignItems: 'center',
                 color: ['white', 'yellow', 'grey'].includes(selectedTeam) ? 'black' : 'white',
-                fontWeight: 'bold',
-                fontSize: '16px',
+                fontWeight: 800,
+                fontSize: '18px',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
               }}>
                 {num}
@@ -123,7 +123,7 @@ const AssetsBar: React.FC<AssetsBarProps> = ({ onDragStart, vertical = false }) 
 
       {/* Ball Asset */}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-        <Text style={{ color: '#ccc', fontSize: '12px', fontWeight: 'bold' }}>BALL</Text>
+        <Text style={{ color: '#fff', fontSize: '14px', fontWeight: 800 }}>BALL</Text>
         <div
           draggable
           onDragStart={(e) => handleDragStart(e, 'ball')}

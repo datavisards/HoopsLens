@@ -60,6 +60,7 @@ const CATEGORY_TOOLTIPS: Record<string, string> = {
 };
 
 const SUB_CATEGORY_TOOLTIPS: Record<string, string> = {
+  'Action': 'Basic building blocks (Pick & Roll, cuts)',
   'Actions': 'Basic building blocks (Pick & Roll, cuts)',
   'Motion': 'Read & React offense (Fluid, 4-Out, 5-Out)',
   'Set': 'Fixed plays for specific shots (Horns, Quick hitters)',
@@ -70,6 +71,11 @@ const SUB_CATEGORY_TOOLTIPS: Record<string, string> = {
   'General Strategy': 'Overarching game plans',
   'Concept': 'Theoretical ideas and principles',
   'Lineup': 'Player combinations'
+};
+
+const formatSubCategoryLabel = (sub?: string) => {
+  if (!sub) return 'GENERAL';
+  return sub === 'Actions' ? 'Action' : sub;
 };
 
 const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSelectTactic }) => {
@@ -303,7 +309,7 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
                 <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
                     {/* Sub-Category */}
                     <div style={{ fontSize: '10px', textTransform: 'uppercase', color: '#A1A1AA', letterSpacing: '1.5px', marginBottom: 2, fontWeight: 700 }}>
-                        {tactic.sub_category || 'GENERAL'}
+                      {formatSubCategoryLabel(tactic.sub_category)}
                     </div>
 
                     {/* Title */}
@@ -595,7 +601,7 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
         {/* Content */}
         <div style={{ padding: '12px 16px' }}>
           <div style={{ fontSize: 10, textTransform: 'uppercase', color: '#A1A1AA', letterSpacing: 1.5, marginBottom: 2, fontWeight: 700 }}>
-            {result.sub_category || 'GENERAL'}
+            {formatSubCategoryLabel(result.sub_category)}
           </div>
           <div style={{ fontSize: 15, fontWeight: 'bold', color: '#F4F4F5', marginBottom: 8, lineHeight: 1.3 }}>
             {result.name}
@@ -697,12 +703,13 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
             <Card size="small" bordered={false} style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.2)', backgroundColor: '#18181B' }}>
                 <Row gutter={[16, 16]} align="middle">
                     <Col xs={24} md={12}>
-                        <Search
+                        <Input
                             placeholder="Search by name or description..."
                             allowClear
                             onChange={e => setSearchText(e.target.value)}
                             style={{ width: '100%' }}
                             prefix={<SearchOutlined style={{ color: '#A1A1AA' }} />}
+                            suffix={<SendOutlined style={{ color: '#F59E0B', fontSize: 16 }} />}
                         />
                     </Col>
                     <Col xs={24} md={12}>
@@ -744,9 +751,9 @@ const TacticsLibrary: React.FC<TacticsLibraryProps> = ({ visible, onClose, onSel
                                 >
                                     <Select.Option value="All" label="All Types">All Types</Select.Option>
                                     {availableSubCategories.map(sub => (
-                                        <Select.Option key={sub} value={sub} label={sub}>
+                                      <Select.Option key={sub} value={sub} label={formatSubCategoryLabel(sub)}>
                                             <Tooltip title={SUB_CATEGORY_TOOLTIPS[sub] || sub} placement="right">
-                                                <div style={{ width: '100%' }}>{sub}</div>
+                                          <div style={{ width: '100%' }}>{formatSubCategoryLabel(sub)}</div>
                                             </Tooltip>
                                         </Select.Option>
                                     ))}

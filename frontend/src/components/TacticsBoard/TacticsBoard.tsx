@@ -48,6 +48,8 @@ import TacticsLibrary from './TacticsLibrary';
 import LineupDiagnosticPanel from './LineupDiagnosticPanel';
 import { resolveCollisions, calculateGhostDefender } from '../../utils/playerUtils';
 import { API_ENDPOINTS } from '../../config/api';
+import TacticFinder from './TacticFinder';
+
 import { ATOMIC_ACTIONS, ATOMIC_ACTION_TAG_OPTIONS } from '../../config/atomicActions';
 import { OFFENSIVE_ROLE_TAG_OPTIONS } from '../../config/playerRoles';
 import { deriveActionTag } from '../../utils/actionTagging';
@@ -996,6 +998,30 @@ const TacticsBoard: React.FC = () => {
     </Tooltip>
   );
 
+  const SidebarSectionLabel = ({ text }: { text: string }) => (
+    <div style={{ 
+      fontSize: '11px', 
+      color: '#FFFFFF', 
+      fontWeight: 800, 
+      letterSpacing: '0.8px', 
+      marginBottom: '8px',
+      marginTop: '4px',
+      width: '100%',
+      textAlign: 'center'
+    }}>
+      {text}
+    </div>
+  );
+
+  const SidebarDivider = () => (
+    <div style={{
+      width: '32px',
+      height: '1px',
+      background: 'rgba(255,255,255,0.1)',
+      margin: '0px 0 12px 0'
+    }} />
+  );
+
   // Action Menu for Selected Entity (Player or Ball)
   const renderPlayerMenu = () => {
     if (!selectedEntity) return null;
@@ -1127,7 +1153,7 @@ const TacticsBoard: React.FC = () => {
         borderRadius: '20px',
         padding: '3px 10px',
         color: 'rgba(255,255,255,0.7)',
-        fontSize: '11px',
+        fontSize: '13px',
         cursor: 'pointer',
         display: 'flex',
         alignItems: 'center',
@@ -1139,7 +1165,7 @@ const TacticsBoard: React.FC = () => {
       };
       return (
         <div style={pillStyle} onClick={() => setIsActionMenuCollapsed(false)}>
-          <span style={{ fontSize: '9px' }}>▶</span>
+          <span style={{ fontSize: '11px' }}>▶</span>
           <span>Edit Action</span>
         </div>
       );
@@ -1199,7 +1225,7 @@ const TacticsBoard: React.FC = () => {
             onClick={() => setIsActionMenuCollapsed(true)}
             style={{
               cursor: 'pointer',
-              fontSize: '10px',
+              fontSize: '12px',
               color: 'rgba(255,255,255,0.45)',
               padding: '0 2px',
               lineHeight: 1,
@@ -1236,7 +1262,7 @@ const TacticsBoard: React.FC = () => {
                     size="small" 
                     shape="circle" 
                     type={currentSpeed === 'walk' ? 'primary' : 'text'} 
-              style={{ color: currentSpeed !== 'walk' ? 'white' : undefined, fontSize: '11px', fontWeight: 700 }} 
+              style={{ color: currentSpeed !== 'walk' ? 'white' : undefined, fontSize: '13px', fontWeight: 800 }} 
                     onClick={() => handleChangeActionSpeed('walk')}
                 >
               {'\uD83D\uDC22'}
@@ -1247,7 +1273,7 @@ const TacticsBoard: React.FC = () => {
                     size="small" 
                     shape="circle" 
                     type={currentSpeed === 'jog' ? 'primary' : 'text'} 
-              style={{ color: currentSpeed !== 'jog' ? 'white' : undefined, fontSize: '11px', fontWeight: 700 }} 
+              style={{ color: currentSpeed !== 'jog' ? 'white' : undefined, fontSize: '13px', fontWeight: 800 }} 
                     onClick={() => handleChangeActionSpeed('jog')}
                 >
               {'\uD83C\uDFC3'}
@@ -1258,7 +1284,7 @@ const TacticsBoard: React.FC = () => {
                     size="small" 
                     shape="circle" 
                     type={currentSpeed === 'sprint' ? 'primary' : 'text'} 
-              style={{ color: currentSpeed !== 'sprint' ? 'white' : undefined, fontSize: '11px', fontWeight: 700 }} 
+              style={{ color: currentSpeed !== 'sprint' ? 'white' : undefined, fontSize: '13px', fontWeight: 800 }} 
                     onClick={() => handleChangeActionSpeed('sprint')}
                 >
               {'\u26A1'}
@@ -1269,7 +1295,7 @@ const TacticsBoard: React.FC = () => {
         {/* Label Input Row (Danmaku) */}
         <div style={{ ...rowStyle, paddingTop: '4px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
             <Input 
-            className="action-label-input"
+                className="styled-dark-input styled-dark-input-round"
                 placeholder="Action Label (e.g. Screen)" 
                 value={selectedAction.label || ''} 
                 onChange={(e) => {
@@ -1279,15 +1305,8 @@ const TacticsBoard: React.FC = () => {
                         [viewMode]: prev[viewMode].map(a => a.id === selectedActionId ? { ...a, label: newLabel } : a)
                     }));
                 }}
-                size="small"
-                style={{
-                  width: '100%',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  background: 'rgba(10,18,32,0.78)',
-                  color: '#f5f8ff',
-                  border: '1px solid rgba(140,170,255,0.35)'
-                }}
+                prefix={<EditOutlined style={{ color: '#FFFFFF', marginRight: '4px' }} />}
+                style={{ width: '100%' }}
                 onClick={(e) => e.stopPropagation()} 
             />
         </div>
@@ -1550,7 +1569,7 @@ const TacticsBoard: React.FC = () => {
   // Top Bar Render
   const renderTopBar = () => (
     <div style={{
-      height: '50px',
+      height: '58px',
       background: '#2A2A2A', // Dark Grey
       display: 'flex',
       alignItems: 'center',
@@ -1585,7 +1604,7 @@ const TacticsBoard: React.FC = () => {
       </div>
 
       {/* Center Frames */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '5px 10px', borderRadius: '4px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '7px 12px', borderRadius: '6px' }}>
         {frames.map((frame, idx) => (
           <Tooltip key={frame.id} title={`Frame ${idx + 1}`}>
             <Button 
@@ -1595,8 +1614,9 @@ const TacticsBoard: React.FC = () => {
                 background: currentFrameIndex === idx ? '#3A7AFE' : 'transparent', // Accent Blue
                 color: currentFrameIndex === idx ? '#fff' : 'rgba(255,255,255,0.7)',
                 border: currentFrameIndex === idx ? 'none' : '1px solid rgba(255,255,255,0.2)',
-                minWidth: '30px',
-                fontWeight: currentFrameIndex === idx ? 'bold' : 'normal'
+                minWidth: '36px',
+                fontSize: '15px',
+                fontWeight: currentFrameIndex === idx ? 800 : 600
               }}
             >
               {idx + 1}
@@ -1632,7 +1652,7 @@ const TacticsBoard: React.FC = () => {
         {/* Frame Description Input */}
         <div style={{ marginLeft: '10px', borderLeft: '1px solid rgba(255,255,255,0.2)', paddingLeft: '10px' }}>
             <Input 
-            className="action-label-input"
+                className="styled-dark-input styled-dark-input-pill"
                 placeholder="Frame Description (e.g. Pick & Roll)" 
                 value={frames[currentFrameIndex]?.description || ''}
                 onChange={(e) => {
@@ -1646,16 +1666,8 @@ const TacticsBoard: React.FC = () => {
                         return newFrames;
                     });
                 }}
-                style={{ 
-                    width: '200px', 
-                  background: 'rgba(10, 18, 32, 0.78)',
-                  border: '1px solid rgba(140, 170, 255, 0.35)',
-                  color: '#f5f8ff',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                    borderRadius: '4px'
-                }}
-                size="small"
+                prefix={<EditOutlined style={{ color: '#FFFFFF', marginRight: '4px' }} />}
+                style={{ width: '220px' }}
             />
         </div>
       </div>
@@ -1673,7 +1685,7 @@ const TacticsBoard: React.FC = () => {
         } placement="topCenter">
           <Button 
             type="text" 
-            style={{ color: 'rgba(255,255,255,0.7)', fontSize: '14px', fontWeight: 'bold', minWidth: '50px' }}
+            style={{ color: 'rgba(255,255,255,0.7)', fontSize: '16px', fontWeight: 800, minWidth: '60px' }}
           >
             {playbackSpeed}x
           </Button>
@@ -2240,70 +2252,57 @@ const TacticsBoard: React.FC = () => {
     }}>
       
       {/* Left Sidebar */}
-      <div style={{
-        width: '70px',
-        background: 'rgba(0,0,0,0.2)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        paddingTop: '20px',
-        borderRight: '1px solid rgba(255,255,255,0.1)',
-        zIndex: 20
-      }}>
-        <SidebarButton 
-          icon={<ExpandOutlined />} 
-          active={viewMode === 'full'} 
-          onClick={() => setViewMode('full')}
-          tooltip="Full Court"
-        />
-        <SidebarButton 
-          icon={<CompressOutlined />} 
-          active={viewMode === 'half'} 
-          onClick={() => setViewMode('half')}
-          tooltip="Half Court"
-        />
-        
-        <div style={{ flex: 1 }} />
-        
-        <SidebarButton 
-          icon={<BookOutlined />} 
-          onClick={() => setIsTacticsLibraryVisible(true)}
-          tooltip="Tactics Gallery"
-          active={isTacticsLibraryVisible}
-        />
+      {/* Left Sidebar (The Ultimate Zoning) - Aggressively Memoized */}
+      {React.useMemo(() => (
+        <div style={{
+          width: '75px',
+          background: 'rgba(0,0,0,0.2)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          paddingTop: '16px',
+          paddingBottom: '16px',
+          borderRight: '1px solid rgba(255,255,255,0.1)',
+          zIndex: 20
+        }}>
+          {/* 1. VIEW */}
+          <SidebarSectionLabel text="VIEW" />
+          <SidebarButton icon={<ExpandOutlined />} active={viewMode === 'full'} onClick={() => setViewMode('full')} tooltip="Full Court" />
+          <SidebarButton icon={<CompressOutlined />} active={viewMode === 'half'} onClick={() => setViewMode('half')} tooltip="Half Court" />
+          <SidebarButton icon={<FullscreenOutlined />} onClick={() => document.documentElement.requestFullscreen()} tooltip="Fullscreen" />
+          
+          <SidebarDivider />
+          
+          {/* 2. OPPONENT */}
+          <SidebarSectionLabel text="OPPONENT" />
+          <SidebarButton icon={showGhostDefense ? <EyeOutlined /> : <EyeInvisibleOutlined />} active={showGhostDefense} onClick={() => setShowGhostDefense(!showGhostDefense)} tooltip="Toggle Ghost Defense" />
+          
+          <SidebarDivider />
+          
+          {/* 3. GALLERY */}
+          <SidebarSectionLabel text="GALLERY" />
+          <SidebarButton icon={<BookOutlined />} active={isTacticsLibraryVisible} onClick={() => setIsTacticsLibraryVisible(true)} tooltip="Tactics Gallery" />
+          <SidebarButton icon={<FolderAddOutlined />} onClick={handleOpenSaveModal} tooltip="Save Tactic" />
+          
+          <SidebarDivider />
+          
+          {/* 4. ANALYTICS */}
+          <SidebarSectionLabel text="ANALYTICS" />
+          <SidebarButton icon={<RadarChartOutlined />} active={isDiagnosticOpen} onClick={() => setIsDiagnosticOpen(prev => !prev)} tooltip="AI Diagnostics" />
 
-<SidebarButton
-            icon={<FolderAddOutlined />}
-            onClick={handleOpenSaveModal}
-            tooltip="Save to Gallery"
+          {/* Spacer to push SYSTEM to the bottom */}
+          <div style={{ flex: 1 }} />
+          
+          {/* 5. SYSTEM / ACTIONS */}
+          <SidebarDivider />
+          <SidebarSectionLabel text="SYSTEM" />
+          <SidebarButton 
+            icon={<DeleteOutlined style={{ color: 'rgba(255, 100, 100, 0.7)' }} />} 
+            onClick={clearBoard} 
+            tooltip="Clear Board" 
           />
-
-        
-
-        <SidebarButton 
-          icon={showGhostDefense ? <EyeOutlined /> : <EyeInvisibleOutlined />} 
-          onClick={() => setShowGhostDefense(!showGhostDefense)}
-          active={showGhostDefense}
-          tooltip="Toggle Ghost Defense"
-        />
-
-        <SidebarButton 
-          icon={<RadarChartOutlined />} 
-          onClick={() => setIsDiagnosticOpen(prev => !prev)}
-          active={isDiagnosticOpen}
-          tooltip="AI Lineup Diagnostics"
-        />
-        <SidebarButton 
-          icon={<DeleteOutlined />} 
-          onClick={clearBoard}
-          tooltip="Clear Board"
-        />
-        <SidebarButton 
-          icon={<FullscreenOutlined />} 
-          onClick={() => document.documentElement.requestFullscreen()}
-          tooltip="Fullscreen"
-        />
-      </div>
+        </div>
+      ), [viewMode, showGhostDefense, isTacticsLibraryVisible, isDiagnosticOpen])}
 
       {/* Main Content Area */}
       <div style={{ 
@@ -2435,76 +2434,80 @@ const TacticsBoard: React.FC = () => {
                     textAlign: 'center',
                     zIndex: 10,
                     pointerEvents: 'none',
-                    fontSize: '16px',
-                    fontWeight: 'bold'
+                    fontSize: '20px',
+                    fontWeight: 800
                   }}>
                     {frames[currentFrameIndex].description}
                   </div>
                 )}
 
-                {/* Roster-Fit Error Overlay (Phase 4 – Micro-View) */}
-                <RosterFitPanel
-                  errors={fitErrors}
-                  players={entities.filter(e => e.type === 'player') as PlayerType[]}
-                />
+                {/* Roster-Fit Error Overlay (Phase 4 – Micro-View) - Memoized */}
+                {React.useMemo(() => (
+                  <RosterFitPanel
+                    errors={fitErrors}
+                    players={entities.filter(e => e.type === 'player') as PlayerType[]}
+                  />
+                ), [fitErrors, entities])}
               </div>
-              {renderTopBar()}
+              {React.useMemo(() => renderTopBar(), [frames, currentFrameIndex, isPlaying, playbackSpeed, viewMode, isAnimationMode])}
             </div>
 
-            {/* Expandable Team Roster Panel (Below Board) */}
-            <div style={{ 
-              width: stageWidth,
-              background: 'rgba(20, 25, 35, 0.75)',
-              backdropFilter: 'blur(16px)',
-              borderRadius: '12px',
-              border: '1px solid rgba(255,255,255,0.08)',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-              display: 'flex',
-              flexDirection: 'column',
-              transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
-              height: isRosterCollapsed ? '32px' : '130px',
-              overflow: 'hidden'
-            }}>
-              {/* Drawer Handle / Header */}
-              <div 
-                onClick={() => setIsRosterCollapsed(!isRosterCollapsed)}
-                style={{
-                  height: '32px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  cursor: 'pointer',
-                  borderBottom: isRosterCollapsed ? 'none' : '1px solid rgba(255,255,255,0.06)',
-                  color: '#A5A6AA',
-                  fontSize: '11px',
-                  fontWeight: 600,
-                  letterSpacing: '1px',
-                  textTransform: 'uppercase',
-                  background: 'rgba(255,255,255,0.02)'
-                }}
-              >
-                Team Roster <span style={{ marginLeft: 6, fontSize: '10px' }}>{isRosterCollapsed ? '▲ FULL ROSTER' : '▼ HIDE'}</span>
-              </div>
-              
-              {/* Content */}
-              {!isRosterCollapsed && (
-                <div style={{ flex: 1, padding: '10px 16px', overflow: 'hidden' }}>
-                    <PlayerInfoPanel 
-                      players={entities.filter(e => e.type === 'player') as PlayerType[]} 
-                      mode="bottom"
-                      onTagClick={(id) => {
-                        setTargetPlayerId(id);
-                        setIsTagModalVisible(true);
-                      }}
-                    />
+            {/* Expandable Team Roster Panel (Below Board) - Memoized */}
+            {React.useMemo(() => (
+              <div style={{ 
+                width: stageWidth,
+                background: 'rgba(20, 25, 35, 0.75)',
+                backdropFilter: 'blur(16px)',
+                borderRadius: '12px',
+                border: '1px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                display: 'flex',
+                flexDirection: 'column',
+                transition: 'all 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
+                height: isRosterCollapsed ? '38px' : '136px',
+                overflow: 'hidden'
+              }}>
+                {/* Drawer Handle / Header */}
+                <div 
+                  onClick={() => setIsRosterCollapsed(!isRosterCollapsed)}
+                  style={{
+                    height: '38px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    borderBottom: isRosterCollapsed ? 'none' : '1px solid rgba(255,255,255,0.06)',
+                    color: '#FFFFFF',
+                    fontSize: '13px',
+                    fontWeight: 800,
+                    letterSpacing: '1px',
+                    textTransform: 'uppercase',
+                    background: 'rgba(255,255,255,0.02)'
+                  }}
+                >
+                  Team Roster <span style={{ marginLeft: 6, fontSize: '12px', fontWeight: 800, color: '#FFFFFF' }}>{isRosterCollapsed ? '▲ FULL ROSTER' : '▼ HIDE'}</span>
                 </div>
-              )}
-            </div>
+                
+                {/* Content */}
+                {!isRosterCollapsed && (
+                  <div style={{ flex: 1, padding: '10px 16px', overflow: 'hidden' }}>
+                      <PlayerInfoPanel 
+                        players={entities.filter(e => e.type === 'player') as PlayerType[]} 
+                        mode="bottom"
+                        onTagClick={(id) => {
+                          setTargetPlayerId(id);
+                          setIsTagModalVisible(true);
+                        }}
+                      />
+                  </div>
+                )}
+              </div>
+            ), [entities, isRosterCollapsed, stageWidth])}
           </div>
 
           {/* Right Panel: AssetsBar */}
           <div style={{
-              width: '100px',
+              width: '112px',
               height: stageHeight,
               display: 'flex',
               flexDirection: 'column',
@@ -2791,7 +2794,7 @@ const TacticsBoard: React.FC = () => {
                               const category = getFieldValue('category');
                               let currentSubCategories: string[] = [];
                               if (category === 'Offense') {
-                                  currentSubCategories = ['Set', 'Motion', 'Actions', 'Continuity', 'Zone'];
+                                  currentSubCategories = ['Set', 'Motion', 'Action', 'Continuity', 'Zone'];
                               } else if (category === 'Defense') {
                                   currentSubCategories = ['Man', 'Zone', 'Press'];
                               } else {
@@ -2820,7 +2823,7 @@ const TacticsBoard: React.FC = () => {
                 <Select
                   mode="multiple"
                   options={atomicActionTagOptions}
-                  placeholder="Select atomic actions (e.g. PnR_BH, Spot_Up, Cut)"
+                  placeholder="Select atomic action (e.g. PnR_BH, Spot_Up, Cut)"
                   optionFilterProp="label"
                   showSearch
                 />

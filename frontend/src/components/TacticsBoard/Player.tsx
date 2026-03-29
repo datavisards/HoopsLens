@@ -126,7 +126,7 @@ const Player: React.FC<PlayerProps> = ({
   };
 
   const label = getPositionLabel(player.number);
-  const fontSize = label.length > 1 ? 11 : 14;
+  const fontSize = label.length > 1 ? 13 : 16;
 
   // Hand Animation Logic
   const baseHandY = -6;

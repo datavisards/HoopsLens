@@ -15,7 +15,7 @@ const PlayerInfoPanel: React.FC<PlayerInfoPanelProps> = ({ players, mode = 'side
   if (players.length === 0) {
     if (mode === 'bottom') {
         return (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#A5A6AA', fontSize: '13px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#A5A6AA', fontSize: '15px', fontWeight: 600 }}>
                 Drag players from the right panel →
             </div>
         );
@@ -70,20 +70,20 @@ const PlayerInfoPanel: React.FC<PlayerInfoPanelProps> = ({ players, mode = 'side
         >
           <div style={{
             width: 32, height: 32, borderRadius: '50%', background: teamColor, color: '#fff',
-            display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '14px', fontWeight: 'bold',
+            display: 'flex', justifyContent: 'center', alignItems: 'center', fontSize: '16px', fontWeight: 800,
             boxShadow: '0 2px 4px rgba(0,0,0,0.3)', border: '2px solid rgba(255,255,255,0.15)', marginRight: '10px'
           }}>
               {player.number}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', flex: 1, overflow: 'hidden' }}>
-            <Text style={{ color: '#E5E5E5', fontSize: '12px', fontWeight: '500', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
+            <Text style={{ color: '#E5E5E5', fontSize: '14px', fontWeight: 600, whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden' }}>
                {player.role || 'Unassigned'}
             </Text>
             <Tooltip title={player.playerTag ? `Role: ${player.playerTag}` : 'Assign Role Tag'}>
                 <Tag 
                   color={player.playerTag ? "processing" : "default"} 
                   style={{ 
-                    marginTop: '4px', padding: '0 6px', fontSize: '10px', cursor: 'pointer', display: 'inline-block',
+                    marginTop: '4px', padding: '1px 8px', fontSize: '12px', fontWeight: 700, cursor: 'pointer', display: 'inline-block',
                     border: player.playerTag ? '1px solid #1677ff' : '1px solid rgba(255,255,255,0.2)',
                     background: player.playerTag ? 'rgba(22, 119, 255, 0.1)' : 'transparent',
                     color: player.playerTag ? '#fff' : '#A5A6AA', width: 'fit-content', transition: 'all 0.2s', margin: 0

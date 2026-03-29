@@ -44,57 +44,34 @@ const DanmakuLayer: React.FC<DanmakuLayerProps> = ({
         const labelX = player.position.x + offsetDistance;
         const labelY = player.position.y - offsetDistance;
 
-        // High-contrast subtitle card + type accent
-        let tagBorderColor = 'rgba(120, 170, 255, 0.9)';
-        let textColor = '#f7fbff';
-
-        // Example Logic based on keywords or types
-        if (action.type === 'screen') {
-          tagBorderColor = 'rgba(255, 214, 102, 0.95)';
-        } else if (action.type === 'move') {
-             // Check label for "Cut"
-             if (action.label?.toLowerCase().includes('cut')) {
-             tagBorderColor = 'rgba(82, 196, 26, 0.95)';
-             } else {
-             tagBorderColor = 'rgba(58, 170, 255, 0.95)';
-             }
-        } else if (action.type === 'shoot') {
-           tagBorderColor = 'rgba(255, 109, 109, 0.95)';
-        }
+        const tagBorderColor = '#3F3F46';
+        const tagFillColor = '#18181B';
+        const textColor = '#F4F4F5';
 
         return (
           <Label 
             key={`danmaku-${action.id}`} 
             x={labelX} 
             y={labelY}
-            opacity={0.9}
+            opacity={0.95}
           >
             <Tag
-              fill="rgba(8, 14, 24, 0.92)"
+              fill={tagFillColor}
               stroke={tagBorderColor}
-              strokeWidth={1.2}
+              strokeWidth={1.5}
               pointerDirection="down-left"
               pointerWidth={8}
               pointerHeight={8}
               lineJoin="round"
-              shadowColor="black"
-              shadowBlur={3}
-              shadowOffset={{ x: 1, y: 1 }}
-              shadowOpacity={0.4}
-              cornerRadius={5}
+              cornerRadius={6}
             />
             <Text
               text={action.label}
-              fontSize={15}
-              fontStyle="700"
+              fontSize={14}
+              fontStyle="600"
               fontFamily="Arial"
-              padding={7}
+              padding={6}
               fill={textColor}
-              stroke="rgba(0,0,0,0.9)"
-              strokeWidth={0.9}
-              shadowColor="rgba(0,0,0,0.85)"
-              shadowBlur={2}
-              shadowOffset={{ x: 0.6, y: 0.6 }}
             />
           </Label>
         );

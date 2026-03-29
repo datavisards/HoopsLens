@@ -119,17 +119,26 @@ export const calculateGhostDefender = (
   const ballPos = ball?.position || { x: 0, y: 0 };
 
   if (hasBall) {
-    let avgPct = 0.35;
-    if (zoneName.includes("Restricted")) avgPct = 0.60;
-    else if (zoneName.includes("Paint")) avgPct = 0.50;
-    else if (zoneName.includes("Mid")) avgPct = 0.40;
+    // Determine base gap strictly based on court zones to prevent unnatural sagging
+    if (zoneName.includes("Restricted") || zoneName.includes("Paint")) {
+        gap = 35; // Tight defense inside
+    } else if (zoneName.includes("Mid")) {
+        gap = 45; // Standard close defense in mid-range
+    } else {
+        gap = 65; // Sag off on the perimeter by default to protect the drive
+    }
     
-    const diff = pct - avgPct;
-    // Factor: 10% diff -> 30px change
-    gap = 45 - (diff * 300); 
+    // Only apply shooting percentage modifiers on the perimeter/mid-range, not in the paint
+    if (!zoneName.includes("Restricted") && !zoneName.includes("Paint")) {
+        if (pct < 0.30) {
+            gap += 20; // Aggressive sag for poor shooters (Ben Simmons treatment)
+        } else if (pct > 0.40) {
+            gap -= 15; // Tighten up on elite shooters
+        }
+    }
     
-    // Clamp gap
-    gap = Math.max(30, Math.min(gap, 150));
+    // Hard clamp: On-ball defenders should NEVER sag more than 85 pixels (~3 meters)
+    gap = Math.max(30, Math.min(gap, 85));
     gap = Math.min(gap, maxDist);
   } else {
     // Off-Ball Defense (Sagging)
