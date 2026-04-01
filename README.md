@@ -1,24 +1,27 @@
-# AI Basketball Tactics Board & Lineup Diagnostic System
+# HoopsLens: Interactive Basketball Tactics and Lineup Fit Analysis
 
-An interactive, AI-powered 2D basketball tactics board. It automatically translates hand-drawn actions on a digital canvas into quantifiable Synergy Sports playtypes, evaluating court spacing and calculating lineup-tactic congruence via mathematical algorithms.
+HoopsLens is a research-oriented basketball tactics system that converts 2D coaching-board actions into structured playtype demand vectors, then evaluates lineup-tactic compatibility with a constrained intersection metric.
 
-## Author
-**Leon** (Initial Draft Version)
+## Links
+- Repository: https://github.com/datavisards/HoopsLens
+- Live Demo: https://hoopslens.vercel.app/
 
-## Repo Link
-https://github.com/datavisards/HoopsLens
-
-## Core Features
-* Interactive 2D Tactics Canvas: Built with React-Konva. Draw screens, passes, dribbles, and off-ball cuts across a full/half-court representation. 
-* Semantic Playtype Tagging: The drawing engine automatically detects actions and maps canvas drawings strictly into Synergy Playtype Dimensions (PnR_BH, Spot_Up, Isolation, etc.).
-* Histogram Intersection Fit Scoring: Evaluates how much a 5-man player lineup matches the drawn tactic sequence using a rigid formula: sum(min(Demand_k, Supply_k)) / sum(Demand).
-* Alpha Positional Decay: Simulates ball possession conflict using geometric series decay weightings.
-* AI Roster Diagnostics: Integrates LLM assistance to automatically suggest which specific player is limiting the tactics score and pinpoints the required archetype to replace them.
+## Methods (Summary)
+- Action-to-playtype mapping: Canvas gestures are mapped to Synergy-style offensive dimensions (e.g., PnR_BH, PnR_RM, Spot_Up, Off_Screen, Cut, Isolation).
+- Demand estimation: Tactic demand is computed from the normalized frequency of tagged actions across frames.
+- Supply estimation: Lineup supply is estimated from role priors with positional decay for overlapping on-ball responsibilities.
+- Fit scoring: Histogram-intersection style fulfillment score:
+	- fit = sum(min(demand_k, supply_k)) / sum(demand_k)
 
 ## Tech Stack
-* Frontend: React, Konva, Vite
-* Backend: Python, FastAPI
+- Frontend: React, TypeScript, Vite, Konva
+- Backend: Python, FastAPI
 
-## Quick Start
-1. Launch Backend: cd backend -> pip install -r requirements.txt -> uvicorn main:app --reload --port 8000
-2. Launch Frontend: cd frontend -> npm install -> npm run dev
+## Configuration
+1. Copy `backend/.env.example` to `backend/.env`.
+2. Set `GEMINI_API_KEY` (default provider).
+3. Optional: set `OPENAI_API_KEY` / `DEEPSEEK_API_KEY`.
+
+## Local Run
+1. Backend: `cd backend` then `pip install -r requirements.txt` then `uvicorn main:app --reload --port 8000`
+2. Frontend: `cd frontend` then `npm install` then `npm run dev`
