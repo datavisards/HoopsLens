@@ -1,4 +1,5 @@
 # Frontend - Node.js
+node_modules/
 frontend/node_modules/
 frontend/dist/
 frontend/.env
@@ -6,12 +7,16 @@ frontend/.env.local
 frontend/.env.*.local
 
 # Backend - Python
+venv/
 backend/__pycache__/
 backend/*.py[cod]
 backend/venv/
 backend/.venv/
 backend/env/
 backend/.env
+
+# Temporary files
+temp_*.txt
 
 # OS specific
 .DS_Store

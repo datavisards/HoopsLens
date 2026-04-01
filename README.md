@@ -6,7 +6,7 @@ An interactive, AI-powered 2D basketball tactics board. It automatically transla
 **Leon** (Initial Draft Version)
 
 ## Repo Link
-https://github.com/LEONL0VE/basketball_Tactics_Board
+https://github.com/datavisards/HoopsLens
 
 ## Core Features
 * Interactive 2D Tactics Canvas: Built with React-Konva. Draw screens, passes, dribbles, and off-ball cuts across a full/half-court representation. 
