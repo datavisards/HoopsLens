@@ -1,27 +1,91 @@
-# HoopsLens: Interactive Basketball Tactics and Lineup Fit Analysis
+# HoopsLens
+[![Demo: HoopsLens](https://img.shields.io/badge/Demo-hoopslens.vercel.app-success)](https://hoopslens.vercel.app/)
 
-HoopsLens is a research-oriented basketball tactics system that converts 2D coaching-board actions into structured playtype demand vectors, then evaluates lineup-tactic compatibility with a constrained intersection metric.
+HoopsLens is an interactive basketball tactics and lineup analysis tool that captures and operationalizes tactical design behavior. Using in-situ (inside the tactics board) and ex-situ (in external analysis panels) visualization and AI techniques, HoopsLens provides real-time feedback to help users reflect on play structure, role assignments, and lineup compatibility. For example, HoopsLens maps frame-level action tags to Synergy-style dimensions and compares tactic demand with lineup supply to surface fit gaps and substitution suggestions.
 
-## Links
-- Repository: https://github.com/datavisards/HoopsLens
-- Live Demo: https://hoopslens.vercel.app/
+This codebase comprises an easy-to-extend <a href="https://react.dev/" target="_blank">React</a> frontend and a <a target="_blank" href="https://www.python.org/downloads/release/python-310/">Python 3.10+</a>, <a target="_blank" href="https://fastapi.tiangolo.com/">FastAPI</a>, <a target="_blank" href="https://www.uvicorn.org/">Uvicorn</a> backend with an API for player lookup, tactics library CRUD, AI semantic tactic search, and lineup diagnostics over HTTP REST.
 
-## Methods (Summary)
-- Action-to-playtype mapping: Canvas gestures are mapped to Synergy-style offensive dimensions (e.g., PnR_BH, PnR_RM, Spot_Up, Off_Screen, Cut, Isolation).
-- Demand estimation: Tactic demand is computed from the normalized frequency of tagged actions across frames.
-- Supply estimation: Lineup supply is estimated from role priors with positional decay for overlapping on-ball responsibilities.
-- Fit scoring: Histogram-intersection style fulfillment score:
-	- fit = sum(min(demand_k, supply_k)) / sum(demand_k)
 
-## Tech Stack
-- Frontend: React, TypeScript, Vite, Konva
-- Backend: Python, FastAPI
+## Setup
+Instructions can be found in the following sub-directories:
+- [frontend](frontend) (frontend)
+- [backend](backend) (backend)
 
-## Configuration
-1. Copy `backend/.env.example` to `backend/.env`.
-2. Set `GEMINI_API_KEY` (default provider).
-3. Optional: set `OPENAI_API_KEY` / `DEEPSEEK_API_KEY`.
+### Local Setup (Run on your machine)
+1. Start backend
 
-## Local Run
-1. Backend: `cd backend` then `pip install -r requirements.txt` then `uvicorn main:app --reload --port 8000`
-2. Frontend: `cd frontend` then `npm install` then `npm run dev`
+```bash
+cd backend
+python -m venv .venv
+```
+
+Activate environment:
+
+```bash
+# Windows PowerShell
+.venv\Scripts\Activate.ps1
+
+# macOS / Linux
+source .venv/bin/activate
+```
+
+Install dependencies and create env file:
+
+```bash
+pip install -r requirements.txt
+```
+
+Copy environment template:
+
+```bash
+# Windows CMD
+copy .env.example .env
+
+# PowerShell
+Copy-Item .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+```
+
+Set your API key in .env:
+- GEMINI_API_KEY (required for AI search and lineup diagnosis)
+
+Run backend:
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+2. Start frontend in another terminal
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+3. Verify local services
+- Frontend: http://localhost:5173
+- Backend health: http://localhost:8000/health
+- Local API base URL is configured in [frontend/.env.development](frontend/.env.development)
+
+
+## Credits
+HoopsLens is maintained by DataVisards contributors.
+
+
+### Citation
+
+
+## Local Deployment Notes
+- This README documents local deployment only.
+- For production server deployment (Nginx + systemd + HTTPS), see [DIGITALOCEAN_DEPLOYMENT.md](DIGITALOCEAN_DEPLOYMENT.md).
+
+
+## License
+The software is available under the [MIT License](LICENSE).
+
+
+## Contact
+If you have any questions, feel free to [open an issue](https://github.com/datavisards/HoopsLens/issues/new/choose) or contact Jianheng Ouyang at [leon4591963565@gmai.com](mailto:leon4591963565@gmai.com).
