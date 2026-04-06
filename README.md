@@ -11,53 +11,22 @@ Instructions can be found in the following sub-directories:
 - [frontend](frontend) (frontend)
 - [backend](backend) (backend)
 
-### Local Setup (Run on your machine)
-1. Start backend
+### Local Deploy (Quick Start)
+Open 2 terminals and run:
+
+1. Backend (Terminal A)
 
 ```bash
 cd backend
 python -m venv .venv
-```
-
-Activate environment:
-
-```bash
-# Windows PowerShell
 .venv\Scripts\Activate.ps1
-
-# macOS / Linux
-source .venv/bin/activate
-```
-
-Install dependencies and create env file:
-
-```bash
 pip install -r requirements.txt
-```
-
-Copy environment template:
-
-```bash
-# Windows CMD
-copy .env.example .env
-
-# PowerShell
 Copy-Item .env.example .env
-
-# macOS / Linux
-cp .env.example .env
+# edit .env and set GEMINI_API_KEY
+uvicorn main:app --reload --port 8000
 ```
 
-Set your API key in .env:
-- GEMINI_API_KEY (required for AI search and lineup diagnosis)
-
-Run backend:
-
-```bash
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-```
-
-2. Start frontend in another terminal
+2. Frontend (Terminal B)
 
 ```bash
 cd frontend
@@ -65,7 +34,7 @@ npm install
 npm run dev
 ```
 
-3. Verify local services
+3. Open in browser
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:8000/health
 
