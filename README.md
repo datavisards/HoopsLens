@@ -16,21 +16,41 @@ Open 2 terminals and run:
 
 1. Backend (Terminal A)
 
+If you already use a conda environment, you can skip the `python -m venv .venv` and `.venv\Scripts\Activate.ps1` lines.
+
 ```bash
+# enter backend directory
 cd backend
+
+# create a project-local Python virtual environment (run once)
 python -m venv .venv
+
+# activate the virtual environment in PowerShell
 .venv\Scripts\Activate.ps1
+
+# install Python dependencies for the backend
 pip install -r requirements.txt
+
+# create local environment config file from template
 Copy-Item .env.example .env
-# edit .env and set GEMINI_API_KEY
+
+# open backend/.env and set your real API key
+# GEMINI_API_KEY=your_real_key_here
+
+# start backend server on http://localhost:8000
 uvicorn main:app --reload --port 8000
 ```
 
 2. Frontend (Terminal B)
 
 ```bash
+# enter frontend directory
 cd frontend
+
+# install Node.js dependencies (run once or when package.json changes)
 npm install
+
+# start frontend dev server on http://localhost:5173
 npm run dev
 ```
 
