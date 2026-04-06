@@ -68,7 +68,6 @@ npm run dev
 3. Verify local services
 - Frontend: http://localhost:5173
 - Backend health: http://localhost:8000/health
-- Local API base URL is configured in [frontend/.env.development](frontend/.env.development)
 
 
 ## Credits
