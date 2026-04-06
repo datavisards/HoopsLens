@@ -87,4 +87,4 @@ The software is available under the [MIT License](LICENSE).
 
 
 ## Contact
-If you have any questions, feel free to [open an issue](https://github.com/datavisards/HoopsLens/issues/new/choose) or contact Jianheng Ouyang at [leon4591963565@gmai.com](mailto:leon4591963565@gmai.com).
+If you have any questions, feel free to [open an issue](https://github.com/datavisards/HoopsLens/issues/new/choose) or contact [Jianheng Ouyang](mailto:leon4591963565@gmail.com).
