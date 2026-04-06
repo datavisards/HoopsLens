@@ -11,6 +11,13 @@ Instructions can be found in the following sub-directories:
 - [frontend](frontend) (frontend)
 - [backend](backend) (backend)
 
+## Repository Layout
+- `frontend/`: React + Vite frontend. Run `npm install` and `npm run dev` here.
+- `backend/`: FastAPI backend. Run Python setup and `uvicorn` here.
+- Root directory: project docs and metadata only.
+
+Do not run `npm install` in the repository root.
+
 ### Local Deploy (Quick Start)
 Open 2 terminals and run:
 
